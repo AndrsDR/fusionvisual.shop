@@ -1,1 +1,1 @@
-# fusionvisual.shop
+kdac ok cá kcdc mcd ñkcmdka ekfv p+feapm 
