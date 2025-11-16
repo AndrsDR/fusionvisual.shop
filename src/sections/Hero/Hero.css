@@ -1,0 +1,101 @@
+.hero-section {
+    position: relative;
+    width: 100vw;
+    height: 90dvh;
+    min-height: 520px;
+
+    display: flex;
+    align-items: flex-end; /* esto hace que el contenido quede ligeramente abajo */
+    justify-content: center;
+
+    overflow: hidden;
+    background-color: var(--bg-page);
+}
+
+
+/* ------------------------------
+Imagen de fondo
+--------------------------------*/
+.hero-bg {
+    position: absolute;
+    inset: 0;
+
+    background-image: url("../../assets/HeroBg.jpg"); /* ← cambia esto a tu imagen */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    z-index: 1;
+}
+
+
+/* ------------------------------
+Capa oscura
+--------------------------------*/
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.65) 0%,
+        rgba(0, 0, 0, 0.35) 40%,
+        rgba(0, 0, 0, 0.15) 100%
+    );
+    z-index: 2;
+}
+
+
+/* ------------------------------
+Contenido centrado abajo
+--------------------------------*/
+.hero-content {
+    position: relative;
+    z-index: 3;
+
+    text-align: center;
+    padding-bottom: 12vh; /* desplaza el contenido hacia abajo */
+}
+
+
+/* ------------------------------
+Título
+--------------------------------*/
+.hero-title {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 700;
+
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+
+/* ------------------------------
+Botón
+--------------------------------*/
+.hero-button {
+    display: inline-block;
+
+    padding: 0.85rem 2.2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+
+    background-color: transparent;
+    color: var(--text-primary);
+
+    border: 2px solid var(--text-primary);
+    border-radius: 50px;
+
+    transition: 
+        background-color 0.25s ease,
+        color 0.25s ease,
+        transform 0.15s ease
+    ;
+}
+
+.hero-button:hover {
+    background-color: var(--text-primary);
+    color: var(--bg-page);
+    transform: scale(1.04);
+}

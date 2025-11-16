@@ -1,68 +1,163 @@
+/* ----------------------------------------------------
+  VARIABLES DEL SISTEMA DE DISEÑO (PALETA OFICIAL)
+  — SIEMPRE VA HASTA ARRIBA —
+------------------------------------------------------ */
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* BACKGROUNDS */
+  --bg-page: #0B0B0B;
+  --bg-header: #111111;
+  --bg-surface: #1A1A1A;
+  --bg-hover: #242424;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* TEXTS */
+  --text-primary: #FFFFFF;
+  --text-secondary: #8E8E8E;
+  --text-accent: #E7E2D7; /* Beige premium */
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  /* BORDERS */
+  --border-default: #242424;
+
+  /* SHADOWS */
+  --shadow-medium: rgba(0, 0, 0, 0.6);
+
+  /* SPACING SCALE */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+
+  /* TYPOGRAPHY SCALE */
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.25rem;
+  --font-xl: 1.5rem;
+  --font-2xl: 2rem;
+  --font-3xl: 2.5rem;
+  --font-4xl: 3rem;
+
+  /* HEIGHTS */
+  --header-height: 64px;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+
+/* ----------------------------------------------------
+  RESET MODERNO (Base profesional tipo Shopify / Vercel)
+------------------------------------------------------ */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-a:hover {
-  color: #535bf2;
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button, input, textarea, select {
+  font: inherit;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+ul, ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+
+/* ----------------------------------------------------
+  ESTILOS GLOBALES DEL SITIO
+------------------------------------------------------ */
+body {
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-size: var(--font-base);
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  line-height: 1.6;
 }
 
+
+/* --------- TITULOS --------- */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+h1 { font-size: var(--font-4xl); }
+h2 { font-size: var(--font-3xl); }
+h3 { font-size: var(--font-2xl); }
+h4 { font-size: var(--font-xl); }
+h5 { font-size: var(--font-lg); }
+h6 { font-size: var(--font-base); }
+
+@media (max-width: 768px) {
+  h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.8rem; }
+  h3 { font-size: 1.5rem; }
+}
+
+
+/* --------- LINKS --------- */
+a {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--text-accent);
+}
+
+
+/* --------- BOTONES (estilo global único) --------- */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  padding: var(--space-3) var(--space-5);
+  border-radius: 50px;
+  font-weight: 600;
+
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--text-primary);
+
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.15s ease;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+button:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-page);
+  transform: scale(1.03);
+}
+
+
+/* --------- SECCIONES --------- */
+section {
+  padding-block: clamp(3rem, 8vw, 6rem);
+}
+
+
+/* --------- CONTENEDOR GLOBAL --------- */
+.container {
+  width: min(1200px, 90%);
+  margin-inline: auto;
 }
