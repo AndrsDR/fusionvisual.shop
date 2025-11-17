@@ -1,0 +1,294 @@
+/* ===========================================================
+CUSTOMIZER SECTION — ESTILOS PRINCIPALES
+Mantiene coherencia con la paleta definida en index.css
+   =========================================================== */
+
+.customizer-section {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	background: var(--bg-page);
+	color: var(--text-primary);
+    padding-bottom: 0;
+    padding-top: var(--header-height);
+}
+
+/* --------- Layout principal --------- */
+.customizer-layout {
+	display: grid;
+	grid-template-columns: 30% 1fr;
+	height: calc(100vh - 140px);
+	/* Ajustar según alto del Header + categoría bar */
+	overflow: hidden;
+}
+
+/* Panel izquierdo */
+.customizer-left {
+	border-right: 1px solid var(--border-default);
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	background: var(--bg-surface);
+}
+
+/* Panel derecho */
+.customizer-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* ← Ahora sí centrado */
+    justify-content: center;
+    padding: var(--space-6) var(--space-8);
+    background: var(--bg-page);
+    position: relative;
+    gap: var(--space-4);
+}
+
+
+.buy-button {
+    margin-top: var(--space-3);
+    margin: var(--space-3) auto 0;
+    padding: 0.6rem 2rem;
+    border-radius: 40px;
+    border: 1px solid var(--text-secondary);
+    background: var(--bg-surface);
+    font-size: var(--font-md);
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+    width: 100%;
+}
+
+.buy-button:hover {
+    transform: translateY(-2px);
+}
+
+
+
+/* ===========================================================
+CATEGORY BAR — barra superior de categorías
+   =========================================================== */
+
+.category-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg-header);
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border-default);
+}
+
+
+.category-pill {
+	padding: var(--space-2) var(--space-4);
+	border-radius: 50px;
+	font-size: var(--font-sm);
+	background: var(--bg-surface);
+	border: 1px solid var(--border-default);
+	white-space: nowrap;
+	cursor: pointer;
+	transition: background .2s ease;
+}
+
+.category-pill.active,
+.category-pill:hover {
+	background: var(--text-primary);
+    color: var(--bg-surface);
+}
+
+
+/* ===========================================================
+CONTROLS — Opciones (color, tela, talla)
+   =========================================================== */
+
+.customizer-controls {
+	padding: var(--space-4);
+	border-bottom: 1px solid var(--border-default);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-4);
+}
+
+.customizer-controls {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border-default);
+    border-radius: 10px;
+    margin: var(--space-3);
+}
+
+
+.controls-title {
+	font-size: var(--font-lg);
+	margin-bottom: var(--space-2);
+}
+
+.control-group label {
+	font-size: var(--font-sm);
+	color: var(--text-secondary);
+}
+
+.color-options {
+	display: flex;
+	gap: var(--space-2);
+	margin-top: var(--space-2);
+}
+
+.color-box {
+	width: 26px;
+	height: 26px;
+	border-radius: 4px;
+	cursor: pointer;
+	border: 1px solid var(--border-default);
+}
+
+.control-select {
+	margin-top: var(--space-1);
+	padding: var(--space-2);
+	background: var(--bg-surface);
+	border: 1px solid var(--border-default);
+	color: var(--text-primary);
+	border-radius: 6px;
+	width: 100%;
+}
+
+
+/* ===========================================================
+DESIGN GRID — galería de diseños seleccionados
+   =========================================================== */
+
+.design-grid {
+	padding: var(--space-3);
+	display: grid;
+	gap: var(--space-3);
+	grid-template-columns: repeat(4, 1fr);
+	overflow-y: auto;
+}
+
+.design-item {
+	width: 100%;
+	background: var(--bg-surface);
+	border: 1px solid var(--border-default);
+	border-radius: 6px;
+	cursor: pointer;
+	padding: var(--space-2);
+	transition: transform .15s ease;
+}
+
+.design-item:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 12px rgba(255,255,255,0.12);
+}
+
+
+.design-item:hover {
+	transform: scale(1.05);
+}
+
+.no-designs-msg {
+	padding: var(--space-4);
+	font-size: var(--font-sm);
+	color: var(--text-secondary);
+}
+
+
+/* ===========================================================
+SHIRT PREVIEW — Vista de la camiseta con diseño overlay
+   =========================================================== */
+
+.shirt-preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+
+
+.shirt-base {
+	width: 380px;
+	height: 380px;
+	border: 2px solid var(--text-secondary);
+	position: relative;
+	background: var(--bg-surface);
+    border-radius: 14px;
+    box-shadow: 0 0 25px rgba(0,0,0,0.45);
+    overflow: hidden;
+}
+
+.shirt-design {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 40%;
+	transform: translate(-50%, -50%);
+}
+
+.shirt-base-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+
+
+/* ===========================================================
+SCROLLBARS PREMIUM OSCUROS
+   =========================================================== */
+
+/* Estilo WebKit (Chrome, Edge, Opera, Brave, Safari) */
+.customizer-left::-webkit-scrollbar,
+.design-grid::-webkit-scrollbar,
+.category-bar::-webkit-scrollbar {
+	width: 8px;
+	height: 8px;
+}
+
+.customizer-left::-webkit-scrollbar-track,
+.design-grid::-webkit-scrollbar-track,
+.category-bar::-webkit-scrollbar-track {
+	background: var(--bg-surface);
+}
+
+.customizer-left::-webkit-scrollbar-thumb,
+.design-grid::-webkit-scrollbar-thumb,
+.category-bar::-webkit-scrollbar-thumb {
+	background: var(--bg-hover);
+	border-radius: 8px;
+}
+
+.customizer-left::-webkit-scrollbar-thumb:hover,
+.design-grid::-webkit-scrollbar-thumb:hover,
+.category-bar::-webkit-scrollbar-thumb:hover {
+	background: var(--text-secondary);
+}
+
+/* Firefox scrollbars */
+.customizer-left,
+.design-grid,
+.category-bar {
+	scrollbar-width: thin;
+	scrollbar-color: var(--bg-hover) var(--bg-surface);
+}
+
+/* Scrollbars oscuros */
+.customizer-left::-webkit-scrollbar,
+.design-grid::-webkit-scrollbar,
+.category-bar::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+.customizer-left::-webkit-scrollbar-thumb,
+.design-grid::-webkit-scrollbar-thumb,
+.category-bar::-webkit-scrollbar-thumb {
+    background: var(--bg-hover);
+    border-radius: 8px;
+}
+
+.customizer-left,
+.design-grid,
+.category-bar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-hover) var(--bg-surface);
+}

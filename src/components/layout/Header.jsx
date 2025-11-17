@@ -1,11 +1,11 @@
 import "./Header.css";
 import logoNegro from "../../assets/LOGO negro (2).png";
 import logoBlanco from "../../assets/LOGO BLANCO (2).png";
+import { useAppActions } from "../../hooks/useAppActions";
 
 
 
 function HeaderSection({ icon = "html", action = () => {} }) {
-    
 
     return (
         <>
@@ -18,6 +18,8 @@ function HeaderSection({ icon = "html", action = () => {} }) {
 
 export function Header() {
 
+    const { handleAction } = useAppActions();
+
     return (
         <header className="site-header">
             <h1 className="site-logo">
@@ -29,7 +31,7 @@ export function Header() {
 
             <nav className="site-nav" aria-label="Navegación principal">
                 <ul className="nav-list">
-                    <HeaderSection icon="home" action={() => alert('home')} />
+                    <HeaderSection icon="home" action={() => handleAction('home')} />
                     <HeaderSection icon="grade" action={() => alert('feature')} />
                     <HeaderSection icon="search" action={() => alert('search')}/>
 

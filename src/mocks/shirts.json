@@ -1,0 +1,32 @@
+{
+    "productId": "basic-shirt-001",
+    "name": "Camiseta básica unisex",
+    "category": "camisetas_basicas",
+    "images": [
+        {
+            "colorId": "black",
+            "label": "Negro",
+            "image": "/shirts/negro.png"
+        },
+        {
+            "colorId": "white",
+            "label": "Blanco",
+            "image": "/shirts/blanco.png"
+        },
+        {
+            "colorId": "gray",
+            "label": "Gris",
+            "image": "/shirts/gris.png"
+        },
+        {
+            "colorId": "navy",
+            "label": "Azul marino",
+            "image": "/shirts/azul.png"
+        },
+        {
+            "colorId": "purple",
+            "label": "Morado",
+            "image": "/shirts/morado.png"
+        }
+    ]
+}
