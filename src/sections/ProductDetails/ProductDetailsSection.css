@@ -1,0 +1,154 @@
+/* SECCIÓN PRINCIPAL */
+.product-details-section {
+    padding-block: calc(clamp(3rem, 8vw, 6rem) + var(--header-height));
+    background: var(--bg-page);
+    color: var(--text-primary);
+}
+
+.details-container {
+    width: min(1200px, 90%);
+    margin-inline: auto;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 4vw, 5rem);
+    align-items: stretch;
+}
+
+@media (max-width: 1300px) {
+    .details-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .details-title {
+        text-align: center;
+        padding-top: var(--space-6);
+    }
+}
+
+/* ====================================================
+COLUMNA IZQUIERDA — IMAGEN DEL PRODUCTO
+==================================================== */
+
+.product-img {
+    width: 100%;
+    max-width: 520px;
+    display: block;
+    margin-inline: auto;
+
+    border-radius: 20px;
+    background: var(--bg-surface);
+
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+/* ====================================================
+COLUMNA DERECHA — INFORMACIÓN DE PRODUCTO
+==================================================== */
+
+.details-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+
+    background: var(--bg-surface);
+    padding: var(--space-6);
+    border-radius: 20px;
+
+    border: 1px solid var(--border-default);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+    justify-content: space-between;
+
+}
+
+@media (max-width: 900px) {
+    .details-info {
+        margin-top: 1rem;
+        text-align: center;
+    }
+}
+
+/* TÍTULO */
+.details-title {
+    font-size: var(--font-3xl);
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+}
+
+/* SUB-TÍTULO (contextual, mejora la composición) */
+.details-subtitle {
+    font-size: var(--font-base);
+    color: var(--text-secondary);
+    margin-top: -0.5rem;
+    margin-bottom: var(--space-4);
+    cursor: pointer;
+    align-self: flex-start;
+}
+
+
+/* LÍNEAS DIVISORAS SUAVES */
+.details-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border-default);
+    opacity: 0.5;
+    margin-block: var(--space-4);
+}
+
+/* ====================================================
+SELECTORES (TALLA / TELA)
+==================================================== */
+
+.details-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.option-label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--font-lg);
+    color: var(--text-primary);
+}
+
+.option-select {
+    padding: var(--space-3);
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border-radius: 12px;
+
+    border: 1px solid var(--border-default);
+    transition: border-color .2s ease, background .2s ease;
+}
+
+.option-select:hover {
+    border-color: var(--text-primary);
+}
+
+/* ====================================================
+BOTÓN
+==================================================== */
+
+.add-cart-btn {
+    margin-top: var(--space-6);
+    padding: var(--space-4) var(--space-6);
+    border-radius: 999px;
+    
+    font-size: var(--font-lg);
+    font-weight: 600;
+
+    border: 2px solid var(--text-primary);
+    background: transparent;
+    color: var(--text-primary);
+
+    transition: background 0.25s ease, color 0.25s ease, transform .15s ease;
+}
+
+.add-cart-btn:hover {
+    background: var(--text-primary);
+    color: var(--bg-page);
+    transform: scale(1.03);
+}

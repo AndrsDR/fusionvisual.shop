@@ -1,53 +1,58 @@
+/* ----------------------------------------------------
+   CATÁLOGO — ESTILO PROFESIONAL FINAL (FLEXBOX)
+----------------------------------------------------- */
+
 .catalog-section {
     width: 100%;
-    padding: var(--space-9) var(--space-6);
+    padding-inline: var(--space-6);
+    padding-block: clamp(3rem, 8vw, 6rem);
     background: var(--bg-page);
 }
 
 .catalog-title {
     text-align: center;
-    font-size: var(--font-2xl);
-    margin-bottom: var(--space-8);
+    margin-bottom: var(--space-6);
     color: var(--text-primary);
 }
 
+/* GRID DEL CATÁLOGO (FLEXBOX PARA CENTRAR SOBRANTES) */
 .catalog-grid {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;      /* 🔥 CENTRA SOBRANTES */
     gap: var(--space-6);
-    justify-content: center;
-    max-width: 1200px;
-    margin: 0 auto
+
+    width: min(1200px, 90%);
+    margin-inline: auto;
 }
 
-
+/* CARD INDIVIDUAL */
 .catalog-card {
     background: var(--bg-surface);
-    border-radius: var(--radius-lg);
     padding: var(--space-4);
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: var(--space-3);
-    box-shadow: var(--shadow-md);
-    transition: transform .15s ease;
-    width: clamp(220px, 30%, 250px);
+    transition: transform .15s ease, box-shadow .2s ease;
+    border: 1px solid var(--border-default);
 
+    /* 🔥 Mantener tamaño consistente como si fuera grid */
+    width: clamp(240px, 30%, 260px);
 }
 
 .catalog-card:hover {
     transform: translateY(-4px);
+    box-shadow: 0 6px 18px var(--shadow-medium);
 }
 
+/* IMAGEN */
 .catalog-img-box {
     width: 100%;
     aspect-ratio: 1/1;
+    border-radius: 12px;
     overflow: hidden;
-    border-radius: var(--radius-md);
-    background: var(--bg-muted);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: var(--bg-hover);
 }
 
 .catalog-img-box img {
@@ -56,24 +61,18 @@
     object-fit: cover;
 }
 
+/* NOMBRE DE LA CATEGORÍA */
 .catalog-cat {
-    font-size: var(--font-lg);
     text-align: center;
+    font-size: var(--font-lg);
+    font-weight: 600;
     color: var(--text-primary);
 }
 
-.catalog-buy {
+/* BOTÓN — estilo global pero compacto */
+.catalog-view-btn {
     margin-top: auto;
-    padding: 0.5rem 1.5rem;
-    border-radius: var(--radius-full);
-    border: 1px solid var(--text-secondary);
-    background: var(--bg-surface);
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: background .2s, transform .15s;
-}
-
-.catalog-buy:hover {
-    background: var(--bg-hover);
-    transform: translateY(-2px);
+    padding: var(--space-3) var(--space-4);
+    border-radius: 999px;
+    font-size: var(--font-base);
 }

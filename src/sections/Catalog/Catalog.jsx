@@ -2,59 +2,54 @@
 import "./Catalog.css";
 import designsData from "../../mocks/designs.json";
 import { useEffect, useState } from "react";
+import { CatalogCard } from "../../components/catalog/CatalogCard";
+import { useNavigate } from "react-router-dom";
 
 export function Catalog() {
     const [items, setItems] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!designsData || !Array.isArray(designsData)) return;
 
-        // Shuffle categories
-        const shuffled = [...designsData].sort(() => Math.random() - 0.5);
-        const selected = shuffled.slice(0, 5);
+        // Selecciona aleatoriamente 5 categorías
+        const randomCategories = [...designsData]
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 5);
 
-        // Pick one mockup per category
-        const randomPicks = selected.map((cat) => {
-            const randomDesign =
-                cat.designs[Math.floor(Math.random() * cat.designs.length)];
+        // Selecciona 1 mockup real por categoría
+        const picks = randomCategories.map((cat) => {
+            const d = cat.designs[Math.floor(Math.random() * cat.designs.length)];
 
             return {
-                id: randomDesign.id,
+                id: d.id,
+                mockup: d.mockup,
                 category: cat.category,
-                mockup: randomDesign.mockup,
+                designData: d
             };
         });
 
-        setItems(randomPicks);
+        setItems(picks);
     }, []);
 
-    const handleBuy = (item) => {
-        console.log({
-            id: item.id,
-            mockup: item.mockup,
+    // Navega al detalle con los datos del item
+    const handleView = (item) => {
+        navigate(`/product/${item.id}`, {
+            state: item
         });
     };
 
     return (
-        <section id="catalog-section" className="catalog-section">
+        <section className="catalog-section">
             <h2 className="catalog-title">Catálogo de Diseños</h2>
 
             <div className="catalog-grid">
                 {items.map((item) => (
-                    <article key={item.id} className="catalog-card">
-                        <div className="catalog-img-box">
-                            <img src={item.mockup} alt={item.category} loading="lazy" />
-                        </div>
-
-                        <h3 className="catalog-cat">{item.category}</h3>
-
-                        <button
-                            className="catalog-buy"
-                            onClick={() => handleBuy(item)}
-                        >
-                            Comprar
-                        </button>
-                    </article>
+                    <CatalogCard
+                        key={item.id}
+                        item={item}
+                        onView={handleView}
+                    />
                 ))}
             </div>
         </section>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./CustomizerSection.css";
 
 import designsData from "../../mocks/designs.json";
@@ -8,7 +8,7 @@ import { CustomizerControls } from "../../components/customizer/CustomizerContro
 import { DesignGrid } from "../../components/customizer/DesignGrid";
 import { ShirtPreview } from "../../components/customizer/ShirtPreview.jsx";
 
-export function CustomizerSection() {
+export function CustomizerSection({ designFromDetail }) {
     const [selectedCategory, setSelectedCategory] = useState(designsData[0]?.category || "");
     const [selectedDesign, setSelectedDesign] = useState(null);
     const [selectedColor, setSelectedColor] = useState("black");
@@ -16,6 +16,28 @@ export function CustomizerSection() {
     const [selectedFabric, setSelectedFabric] = useState("cotton");
 
     const currentShirt = shirtData.images.find(img => img.colorId === selectedColor);
+    console.log(designFromDetail);
+
+    /* 🎯 Si venimos desde ProductDetail, autoseleccionar diseño */
+    useEffect(() => {
+        if (!designFromDetail) return;
+
+
+        const categoryObj = designsData.find(
+            c => c.category === designFromDetail.category
+        );
+        if (!categoryObj) return;
+
+
+        const realDesign = categoryObj.designs.find(
+            d => d.id === designFromDetail.id
+        );
+        if (!realDesign) return;
+
+
+        setSelectedCategory(categoryObj.category);
+        setSelectedDesign(realDesign);
+        }, [designFromDetail]);
 
     const handleBuy = () => {
         if (!selectedDesign) {
@@ -30,7 +52,6 @@ export function CustomizerSection() {
             size: selectedSize,
         });
     };
-
 
     return (
         <section className="customizer-section">
@@ -64,7 +85,6 @@ export function CustomizerSection() {
                             designImg={selectedDesign?.png}
                         />
 
-                        {/* 🔥 Botón Comprar */}
                         <button className="buy-button" onClick={handleBuy}>
                             Comprar
                         </button>
