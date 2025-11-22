@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { Header } from "../components/layout/Header.jsx";
 import { CustomizerSection } from "../sections/Customizer/CustomizerSection.jsx";
+import { Footer } from "../components/layout/Footer.jsx";
 
 export function CustomizerPage() {
     const location = useLocation();              
@@ -10,6 +11,7 @@ export function CustomizerPage() {
         <>
             <Header />
             <CustomizerSection designFromDetail={designFromDetail} />
+            <Footer />
         </>
     );
 }

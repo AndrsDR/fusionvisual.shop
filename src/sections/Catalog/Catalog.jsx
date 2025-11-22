@@ -40,8 +40,12 @@ export function Catalog() {
     };
 
     return (
-        <section className="catalog-section">
-            <h2 className="catalog-title">Catálogo de Diseños</h2>
+        <section id="catalog" className="catalog-section">
+            <div className="catalog-header">
+                <h2 className="catalog-title">Diseños destacados</h2>
+                <p className="catalog-subtitle">Selecciona tu favorito</p>
+            </div>
+
 
             <div className="catalog-grid">
                 {items.map((item) => (

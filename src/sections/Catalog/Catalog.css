@@ -6,14 +6,26 @@
     width: 100%;
     padding-inline: var(--space-6);
     padding-block: clamp(3rem, 8vw, 6rem);
+    padding-bottom: 0;
     background: var(--bg-page);
 }
 
 .catalog-title {
     text-align: center;
-    margin-bottom: var(--space-6);
     color: var(--text-primary);
 }
+
+.catalog-header {
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
+
+.catalog-subtitle {
+    margin-top: var(--space-2);
+    font-size: var(--font-lg);
+    color: var(--text-secondary);
+}
+
 
 /* GRID DEL CATÁLOGO (FLEXBOX PARA CENTRAR SOBRANTES) */
 .catalog-grid {

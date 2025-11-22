@@ -32,12 +32,13 @@ export function Header() {
             <nav className="site-nav" aria-label="Navegación principal">
                 <ul className="nav-list">
                     <HeaderSection icon="home" action={() => handleAction('home')} />
-                    <HeaderSection icon="grade" action={() => alert('feature')} />
-                    <HeaderSection icon="search" action={() => alert('search')}/>
+                    <HeaderSection icon="bookmark_stacks" action={() => handleAction('catalog')} />
+                    <HeaderSection icon="search" action={() => handleAction('search')}/>
 
                     <hr className="header-divider"/>
 
-                    <HeaderSection icon="groups" action={() => alert('about')} />
+                    <HeaderSection icon="groups" action={() => handleAction('about')} />
+                    <HeaderSection icon="help" action={() => handleAction('how')} />
                     
                     <hr className="header-divider"/>
                 </ul>

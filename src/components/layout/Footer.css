@@ -1,0 +1,80 @@
+.footer-wrapper {
+    width: 100%;
+    padding: 4rem 2rem 2rem;
+    background: var(--card);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+}
+
+/* BRANDING */
+.footer-brand {
+    text-align: center;
+}
+
+.footer-brand h2 {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.footer-brand p {
+    margin-top: 0.6rem;
+    opacity: 0.75;
+    font-size: 1.1rem;
+}
+
+/* COLUMNS */
+.footer-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2.5rem;
+    justify-content: center;
+}
+
+.footer-col h3 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    opacity: 0.8;
+}
+
+.footer-col li {
+    margin-bottom: 0.6rem;
+    font-size: 1rem;
+}
+
+.footer-col a {
+    color: inherit;
+    text-decoration: none;
+    transition: 0.25s;
+}
+
+.footer-col a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* BOTTOM */
+.footer-bottom {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    opacity: 0.7;
+}
+
+.designer-credit {
+    margin-top: 0.4rem;
+}
