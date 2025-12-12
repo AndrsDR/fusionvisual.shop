@@ -6,8 +6,13 @@ export function CustomizerControls({
     selectedSize,
     onSelectSize,
     selectedFabric,
-    onSelectFabric
+    onSelectFabric,
+    selectedShirtType,
+    onSelectShirtType
 }) {
+    const colors = shirtData.images;
+    const shirtTypes = shirtData.types;
+
     return (
         <div className="customizer-controls">
             <h3 className="controls-title">Opciones</h3>
@@ -16,13 +21,16 @@ export function CustomizerControls({
             <label className="control-group">
                 Color de camiseta:
                 <div className="color-options">
-                    {shirtData.images.map((c) => (
+                    {colors.map((c) => (
                         <span
                             key={c.colorId}
                             className="color-box"
                             style={{
-                                background: c.label === "Blanco" ? "#fff" : c.colorId,
-                                border: selectedColor === c.colorId ? "2px solid var(--text-primary)" : "1px solid var(--border-default)"
+                                background: c.previewColor,
+                                border:
+                                    selectedColor === c.colorId
+                                        ? "2px solid var(--text-primary)"
+                                        : "1px solid var(--border-default)"
                             }}
                             onClick={() => onSelectColor(c.colorId)}
                         ></span>
@@ -30,7 +38,23 @@ export function CustomizerControls({
                 </div>
             </label>
 
-            {/* === TIPO DE TELA === */}
+            {/* === TIPO DE PRENDA === */}
+            <label className="control-group">
+                Tipo de prenda:
+                <select
+                    className="control-select"
+                    value={selectedShirtType}
+                    onChange={(e) => onSelectShirtType(e.target.value)}
+                >
+                    {shirtTypes.map((t) => (
+                        <option key={t.id} value={t.id}>
+                            {t.label}
+                        </option>
+                    ))}
+                </select>
+            </label>
+
+            {/* === TELA === */}
             <label className="control-group">
                 Tipo de tela:
                 <select

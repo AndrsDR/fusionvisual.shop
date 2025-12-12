@@ -1,21 +1,22 @@
-import { useState } from 'react'
-import { Header } from './components/layout/Header'
-import { HomePage } from './pages/HomePage'
-import { CustomizerPage } from './pages/CustomizerPage'
-import { Routes, Route } from 'react-router-dom'
-import { ProductDetailPage } from "./pages/ProductDetail"
+import { Routes, Route } from "react-router-dom";
+import { HomePage } from "./pages/HomePage";
+import { CustomizerPage } from "./pages/CustomizerPage";
+import { ProductDetailPage } from "./pages/ProductDetail";
+import { CartSidebar } from "./components/layout/CartSidebar.jsx";
+
 
 function App() {
+    return (
+        <>
+            <CartSidebar />
 
-  return (
-    <>
-    <Routes>
-      <Route path="/product/:id" element={<ProductDetailPage />} />
-      <Route path="/" element={<HomePage />} />
-      <Route path="/customizer" element={<CustomizerPage />} />
-    </Routes>
-    </>
-  )
+            <Routes>
+                <Route path="/product/:id" element={<ProductDetailPage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/customizer" element={<CustomizerPage />} />
+            </Routes>
+        </>
+    );
 }
 
-export default App
+export default App;

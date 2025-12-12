@@ -1,26 +1,49 @@
 // src/sections/ProductDetails/ProductDetailsSection.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./ProductDetailsSection.css";
 
 import { ProductImage } from "../../components/productDetails/ProductImage";
 import { ProductOptions } from "../../components/productDetails/ProductOptions";
 import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext.jsx";
 
 export function ProductDetailsSection({ item }) {
     const [size, setSize] = useState("M");
     const [fabric, setFabric] = useState("cotton");
+    const [shirtType, setShirtType] = useState("basic");
+    const [printBack, setPrintBack] = useState(false);
+
     const navigate = useNavigate();
+    const { addToCart, cart } = useCart();
+
+    useEffect(() => {
+        console.log("🛒 Carrito actualizado (detalle producto):", cart);
+    }, [cart]);
 
     const handleAdd = () => {
-        const product = {
-            id: item.id,
-            mockup: item.mockup,
-            category: item.category,
+        if (!item) return;
+
+        const design = item.designData ?? item;
+
+        const sidesMode = printBack ? "both" : "front";
+
+        const cartItemId = `default-${design.id}-${shirtType}-${sidesMode}-${size}-${fabric}`;
+
+        const productForCart = {
+            id: cartItemId,
+            type: "default",
+            name: design.category ?? item.category,
+            baseProductId: "tshirt",
             size,
-            fabric
+            fabric,
+            shirtType,
+            sidesMode,
+            designId: design.id,
+            designImageUrl: design.mockup ?? item.mockup,
+            unitPrice: 0
         };
 
-        console.log("Producto listo para carrito:", product);
+        addToCart(productForCart, 1);
     };
 
     return (
@@ -31,14 +54,27 @@ export function ProductDetailsSection({ item }) {
 
                 <div className="details-info">
                     <h2 className="details-title">{item.category}</h2>
-                    <p className="details-subtitle" onClick={() => navigate("/customizer", { state: { design: item } })}>Personaliza tu camiseta</p>
+
+                    <p
+                        className="details-subtitle"
+                        onClick={() =>
+                            navigate("/customizer", { state: { design: item } })
+                        }
+                    >
+                        Personaliza tu camiseta
+                    </p>
+
                     <hr />
 
                     <ProductOptions
                         size={size}
                         fabric={fabric}
+                        shirtType={shirtType}
+                        printBack={printBack}
                         onSize={setSize}
                         onFabric={setFabric}
+                        onShirtType={setShirtType}
+                        onTogglePrintBack={() => setPrintBack(prev => !prev)}
                     />
 
                     <button className="add-cart-btn" onClick={handleAdd}>

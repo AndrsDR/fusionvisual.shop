@@ -67,6 +67,7 @@ COLUMNA DERECHA — INFORMACIÓN DE PRODUCTO
         margin-top: 1rem;
         text-align: center;
     }
+
 }
 
 /* TÍTULO */
@@ -86,6 +87,12 @@ COLUMNA DERECHA — INFORMACIÓN DE PRODUCTO
     align-self: flex-start;
 }
 
+
+@media (min-width: 900px) {
+    .details-subtitle {
+        align-self: center;
+    }
+}
 
 /* LÍNEAS DIVISORAS SUAVES */
 .details-divider {

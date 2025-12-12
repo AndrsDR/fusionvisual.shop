@@ -1,32 +1,56 @@
 {
-    "productId": "basic-shirt-001",
-    "name": "Camiseta básica unisex",
-    "category": "camisetas_basicas",
+    "productId": "shirt-001",
+    "name": "Camiseta personalizable",
+    "category": "camisetas",
+    "types": [
+        {
+            "id": "basic",
+            "label": "Básica"
+        },
+        {
+            "id": "polo",
+            "label": "Polo"
+        },
+        {
+            "id": "v-neck",
+            "label": "Cuello V"
+        }
+    ],
     "images": [
         {
-            "colorId": "black",
-            "label": "Negro",
-            "image": "/shirts/negro.png"
-        },
-        {
-            "colorId": "white",
+            "colorId": "blanco",
             "label": "Blanco",
-            "image": "/shirts/blanco.png"
+            "previewColor": "#ffffff"
         },
         {
-            "colorId": "gray",
+            "colorId": "negro",
+            "label": "Negro",
+            "previewColor": "#111111"
+        },
+        {
+            "colorId": "gris",
             "label": "Gris",
-            "image": "/shirts/gris.png"
+            "previewColor": "#7a7a7a"
         },
         {
-            "colorId": "navy",
-            "label": "Azul marino",
-            "image": "/shirts/azul.png"
+            "colorId": "azul",
+            "label": "Azul",
+            "previewColor": "#2456ff"
         },
         {
-            "colorId": "purple",
+            "colorId": "rojo",
+            "label": "Rojo",
+            "previewColor": "#e02525"
+        },
+        {
+            "colorId": "morado",
             "label": "Morado",
-            "image": "/shirts/morado.png"
+            "previewColor": "#8040c9"
+        },
+        {
+            "colorId": "marfil",
+            "label": "Marfil",
+            "previewColor": "#f2e4cf"
         }
     ]
 }

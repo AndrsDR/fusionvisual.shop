@@ -1,8 +1,33 @@
 // src/components/productDetails/ProductOptions.jsx
-export function ProductOptions({ size, fabric, onSize, onFabric }) {
+
+export function ProductOptions({
+    size,
+    fabric,
+    shirtType,
+    printBack,
+    onSize,
+    onFabric,
+    onShirtType,
+    onTogglePrintBack
+}) {
     return (
         <div className="details-options">
 
+            {/* TIPO DE PRENDA */}
+            <label className="option-label">
+                Tipo de prenda:
+                <select
+                    className="option-select"
+                    value={shirtType}
+                    onChange={(e) => onShirtType(e.target.value)}
+                >
+                    <option value="basic">Básica</option>
+                    <option value="polo">Polo</option>
+                    <option value="v-neck">Cuello V</option>
+                </select>
+            </label>
+
+            {/* TALLA */}
             <label className="option-label">
                 Talla:
                 <select
@@ -18,8 +43,9 @@ export function ProductOptions({ size, fabric, onSize, onFabric }) {
                 </select>
             </label>
 
+            {/* TELA */}
             <label className="option-label">
-                Tela:
+                Tipo de tela:
                 <select
                     className="option-select"
                     value={fabric}
@@ -29,6 +55,17 @@ export function ProductOptions({ size, fabric, onSize, onFabric }) {
                     <option value="dryfit">DryFit</option>
                     <option value="oversize">Oversize Heavy</option>
                 </select>
+            </label>
+
+            {/* IMPRIMIR TAMBIÉN EN ESPALDA */}
+            <label className="option-label option-toggle">
+                <input
+                    type="checkbox"
+                    checked={printBack}
+                    onChange={onTogglePrintBack}
+                    style={{ marginRight: "8px" }}
+                />
+                Imprimir también en la espalda (mismo diseño)
             </label>
 
         </div>

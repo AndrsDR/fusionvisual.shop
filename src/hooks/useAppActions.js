@@ -1,10 +1,12 @@
 // hooks/useAppActions.js
 import { useNavigate } from "react-router-dom";
 import { useSearch } from "../context/SearchContext";
+import { useCartUI } from "../context/CartUIContext.jsx";
 
 export function useAppActions() {
     const navigate = useNavigate();
     const { toggleSearch } = useSearch();
+    const { toggleCart } = useCartUI();
 
     const smoothScrollTo = (id) => {
         if (!id) return;
@@ -17,10 +19,13 @@ export function useAppActions() {
                 el.scrollIntoView({ behavior: "smooth", block: "start" });
                 return;
             }
-            if (tries++ < maxTries) requestAnimationFrame(attempt);
+            tries += 1;
+            if (tries < maxTries) {
+                setTimeout(attempt, 50);
+            }
         };
 
-        requestAnimationFrame(attempt);
+        attempt();
     };
 
     const goHome = () => {
@@ -30,22 +35,35 @@ export function useAppActions() {
 
     const goToSection = (id) => {
         if (!id) return;
-        navigate("/");
-        smoothScrollTo(id);
+
+        if (window.location.pathname !== "/") {
+            navigate("/");
+            setTimeout(() => smoothScrollTo(id), 120);
+        } else {
+            smoothScrollTo(id);
+        }
     };
 
     const handleAction = (action) => {
-        if (!action) return console.warn("Action vacía en handleAction");
+        if (!action) return;
 
         if (typeof action === "string") {
             switch (action) {
-                case "home": return goHome();
-                case "catalog": return goToSection("catalog");
-                case "about": return goToSection("about");
-                case "how": return goToSection("how");
-                case "search": return toggleSearch();
+                case "home":
+                    return goHome();
+                case "catalog":
+                    return goToSection("catalog");
+                case "about":
+                    return goToSection("about");
+                case "how":
+                    return goToSection("how");
+                case "search":
+                    return toggleSearch();
+                case "cart":
+                    return toggleCart();
                 default:
-                    return console.warn(`No action registrada: ${action}`);
+                    console.warn("No action registrada:", action);
+                    return;
             }
         }
 

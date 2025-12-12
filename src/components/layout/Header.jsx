@@ -45,7 +45,7 @@ export function Header() {
 
                 
 
-                <button onClick={() => alert('cart')} className="icon-button cart-button" aria-label="Abrir carrito">
+                <button onClick={() => handleAction("cart")} className="icon-button cart-button" aria-label="Abrir carrito">
                     <span className="material-symbols-outlined">shopping_cart</span>
                     <span className="cart-count">#</span>
                 </button>
