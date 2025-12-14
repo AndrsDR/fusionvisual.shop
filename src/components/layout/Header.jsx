@@ -1,51 +1,52 @@
 import "./Header.css";
-import logoNegro from "../../assets/LOGO negro (2).png";
 import logoBlanco from "../../assets/LOGO BLANCO (2).png";
 import { useAppActions } from "../../hooks/useAppActions";
 
-
-
-function HeaderSection({ icon = "html", action = () => {} }) {
-
+function HeaderSection({ icon, text, action }) {
     return (
-        <>
-        <button onClick={action} className="icon-button">
-            <span className="material-symbols-outlined">{icon}</span>
-        </button>
-        </>
-    )
+        <li className="nav-item">
+            <button onClick={action} className="nav-button" aria-label={text}>
+                <span className="nav-icon material-symbols-outlined" aria-hidden="true">
+                    {icon}
+                </span>
+                <span className="nav-text">{text}</span>
+            </button>
+        </li>
+    );
 }
 
 export function Header() {
-
     const { handleAction } = useAppActions();
 
     return (
         <header className="site-header">
             <h1 className="site-logo">
-                <img src={logoBlanco} alt="img" />
+                <img src={logoBlanco} alt="Fusion Visual" />
                 <span className="visually-hidden">Fusion Visual</span>
             </h1>
 
-            <hr className="header-divider"/>
+            <hr className="header-divider" />
 
             <nav className="site-nav" aria-label="Navegación principal">
                 <ul className="nav-list">
-                    <HeaderSection icon="home" action={() => handleAction('home')} />
-                    <HeaderSection icon="bookmark_stacks" action={() => handleAction('catalog')} />
-                    <HeaderSection icon="search" action={() => handleAction('search')}/>
+                    <HeaderSection icon="home" text="Inicio" action={() => handleAction("home")} />
+                    <HeaderSection icon="bookmark_stacks" text="Catalogo" action={() => handleAction("catalog")} />
+                    <HeaderSection icon="search" text="Buscador" action={() => handleAction("search")} />
 
-                    <hr className="header-divider"/>
+                    <hr className="header-divider" />
 
-                    <HeaderSection icon="groups" action={() => handleAction('about')} />
-                    <HeaderSection icon="help" action={() => handleAction('how')} />
-                    
-                    <hr className="header-divider"/>
+                    <HeaderSection icon="sell" text="Quienes somos" action={() => handleAction("about")} />
+                    <HeaderSection icon="help" text="Como funciona" action={() => handleAction("how")} />
+
+                    <hr className="header-divider" />
                 </ul>
 
-                
-
-                <button onClick={() => handleAction("cart")} className="icon-button cart-button" aria-label="Abrir carrito">
+                {/* Carrito SIEMPRE igual */}
+                <button
+                    onClick={() => handleAction("cart")}
+                    className="icon-button cart-button"
+                    aria-label="Abrir carrito"
+                >
                     <span className="material-symbols-outlined">shopping_cart</span>
                     <span className="cart-count">#</span>
                 </button>

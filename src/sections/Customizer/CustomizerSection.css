@@ -9,8 +9,8 @@ Mantiene coherencia con la paleta definida en index.css
 	width: 100%;
 	background: var(--bg-page);
 	color: var(--text-primary);
-    padding-bottom: 0;
-    padding-top: var(--header-height);
+	padding-bottom: 0;
+	padding-top: var(--header-height);
 }
 
 /* --------- Layout principal --------- */
@@ -33,69 +33,33 @@ Mantiene coherencia con la paleta definida en index.css
 
 /* Panel derecho */
 .customizer-right {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* ← Ahora sí centrado */
-    justify-content: center;
-    padding: var(--space-6) var(--space-8);
-    background: var(--bg-page);
-    position: relative;
-    gap: var(--space-4);
+	display: flex;
+	flex-direction: column;
+	align-items: center; /* ← Ahora sí centrado */
+	justify-content: center;
+	padding: var(--space-6) var(--space-8);
+	background: var(--bg-page);
+	position: relative;
+	gap: var(--space-4);
 }
 
-
 .buy-button {
-    margin-top: var(--space-3);
-    margin: var(--space-3) auto 0;
-    padding: 0.6rem 2rem;
-    border-radius: 40px;
-    border: 1px solid var(--text-secondary);
-    background: var(--bg-surface);
-    font-size: var(--font-md);
-    cursor: pointer;
-    transition: background .2s, transform .15s;
-    width: 100%;
+	margin-top: var(--space-3);
+	margin: var(--space-3) auto 0;
+	padding: 0.6rem 2rem;
+	border-radius: 40px;
+	border: 1px solid var(--text-secondary);
+	background: var(--bg-surface);
+	font-size: var(--font-md);
+	cursor: pointer;
+	transition: background .2s, transform .15s;
+	width: 100%;
 	max-width: 500px;
 }
 
 .buy-button:hover {
-    transform: translateY(-2px);
+	transform: translateY(-2px);
 }
-
-
-
-/* ===========================================================
-CATEGORY BAR — barra superior de categorías
-   =========================================================== */
-
-.category-bar {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-    padding: var(--space-3) var(--space-4);
-    background: var(--bg-header);
-    overflow-x: auto;
-    border-bottom: 1px solid var(--border-default);
-}
-
-
-.category-pill {
-	padding: var(--space-2) var(--space-4);
-	border-radius: 50px;
-	font-size: var(--font-sm);
-	background: var(--bg-surface);
-	border: 1px solid var(--border-default);
-	white-space: nowrap;
-	cursor: pointer;
-	transition: background .2s ease;
-}
-
-.category-pill.active,
-.category-pill:hover {
-	background: var(--text-primary);
-    color: var(--bg-surface);
-}
-
 
 /* ===========================================================
 CONTROLS — Opciones (color, tela, talla)
@@ -110,12 +74,11 @@ CONTROLS — Opciones (color, tela, talla)
 }
 
 .customizer-controls {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--border-default);
-    border-radius: 10px;
-    margin: var(--space-3);
+	background: rgba(255,255,255,0.02);
+	border: 1px solid var(--border-default);
+	border-radius: 10px;
+	margin: var(--space-3);
 }
-
 
 .controls-title {
 	font-size: var(--font-lg);
@@ -151,7 +114,6 @@ CONTROLS — Opciones (color, tela, talla)
 	width: 100%;
 }
 
-
 /* ===========================================================
 DESIGN GRID — galería de diseños seleccionados
    =========================================================== */
@@ -175,35 +137,28 @@ DESIGN GRID — galería de diseños seleccionados
 }
 
 .design-item:hover {
-    transform: scale(1.06);
-    box-shadow: 0 0 12px rgba(255,255,255,0.12);
+	transform: scale(1.06);
+	box-shadow: 0 0 12px rgba(255,255,255,0.12);
 }
 
-
-.design-item:hover {
-	transform: scale(1.05);
-}
-
+/* (tenías duplicado, dejo solo uno) */
 .no-designs-msg {
 	padding: var(--space-4);
 	font-size: var(--font-sm);
 	color: var(--text-secondary);
 }
 
-
 /* ===========================================================
 SHIRT PREVIEW — Vista de la camiseta con diseño overlay
    =========================================================== */
 
 .shirt-preview {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: fit-content;
-    margin: 0 auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: fit-content;
+	margin: 0 auto;
 }
-
-
 
 .shirt-base {
 	width: 380px;
@@ -211,39 +166,37 @@ SHIRT PREVIEW — Vista de la camiseta con diseño overlay
 	border: 2px solid var(--text-secondary);
 	position: relative;
 	background: var(--bg-surface);
-    border-radius: 14px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.45);
-    overflow: hidden;
+	border-radius: 14px;
+	box-shadow: 0 0 25px rgba(0,0,0,0.45);
+	overflow: hidden;
 }
 
 .shirt-design {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -45%);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -45%);
 }
 
 /* básica: tu config original que te funcionaba bien */
 .shirt-design-basic {
-    width: 35%;
-    transform: translate(-50%, -45%);
+	width: 35%;
+	transform: translate(-50%, -45%);
 }
 
 /* polo y cuello V: más pequeñas y un pelín más abajo */
 .shirt-design-polo,
 .shirt-design-v-neck {
-    width: 30%;
-    transform: translate(-50%, -40%);
+	width: 30%;
+	transform: translate(-50%, -40%);
 }
 
 .shirt-base-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
 }
-
-
 
 /* ===========================================================
 SCROLLBARS PREMIUM OSCUROS
@@ -252,78 +205,250 @@ SCROLLBARS PREMIUM OSCUROS
 /* Estilo WebKit (Chrome, Edge, Opera, Brave, Safari) */
 .customizer-left::-webkit-scrollbar,
 .design-grid::-webkit-scrollbar,
-.category-bar::-webkit-scrollbar {
+.category-grid::-webkit-scrollbar {
 	width: 8px;
 	height: 8px;
 }
 
 .customizer-left::-webkit-scrollbar-track,
 .design-grid::-webkit-scrollbar-track,
-.category-bar::-webkit-scrollbar-track {
+.category-grid::-webkit-scrollbar-track {
 	background: var(--bg-surface);
 }
 
 .customizer-left::-webkit-scrollbar-thumb,
 .design-grid::-webkit-scrollbar-thumb,
-.category-bar::-webkit-scrollbar-thumb {
+.category-grid::-webkit-scrollbar-thumb {
 	background: var(--bg-hover);
 	border-radius: 8px;
 }
 
 .customizer-left::-webkit-scrollbar-thumb:hover,
 .design-grid::-webkit-scrollbar-thumb:hover,
-.category-bar::-webkit-scrollbar-thumb:hover {
+.category-grid::-webkit-scrollbar-thumb:hover {
 	background: var(--text-secondary);
 }
 
 /* Firefox scrollbars */
 .customizer-left,
 .design-grid,
-.category-bar {
+.category-grid {
 	scrollbar-width: thin;
 	scrollbar-color: var(--bg-hover) var(--bg-surface);
 }
 
-/* Scrollbars oscuros */
-.customizer-left::-webkit-scrollbar,
-.design-grid::-webkit-scrollbar,
-.category-bar::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
-}
-
-.customizer-left::-webkit-scrollbar-thumb,
-.design-grid::-webkit-scrollbar-thumb,
-.category-bar::-webkit-scrollbar-thumb {
-    background: var(--bg-hover);
-    border-radius: 8px;
-}
-
-.customizer-left,
-.design-grid,
-.category-bar {
-    scrollbar-width: thin;
-    scrollbar-color: var(--bg-hover) var(--bg-surface);
-}
+/* ===========================================================
+PREVIEW (dual)
+   =========================================================== */
 
 .preview-dual {
-    display: flex;
-    gap: 30px;
-    align-items: center;
+	display: flex;
+	gap: 30px;
+	align-items: center;
 }
 
 .preview-box {
-    border: 2px solid transparent;
-    border-radius: 18px;
-    padding: 8px;
-    transition: .2s;
+	border: 2px solid transparent;
+	border-radius: 18px;
+	padding: 8px;
+	transition: .2s;
 }
 
 .preview-box:hover {
-    border-color: #666;
+	border-color: #666;
 }
 
 .active-preview {
-    border-color: var(--text-secondary);
-    box-shadow: 0px 0px 12px var(--text-primary);
+	border-color: var(--text-secondary);
+	box-shadow: 0px 0px 12px var(--text-primary);
+}
+
+/* ===========================================================
+CATEGORY DROPDOWN — barra plegable (overlay)
+=========================================================== */
+
+.category-dropdown {
+	position: relative;
+	z-index: 50;
+	background: var(--bg-header);
+	border-bottom: 1px solid var(--border-default);
+}
+
+.category-trigger {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	padding: var(--space-3) var(--space-4);
+	background: transparent;
+	border: 0;
+	color: var(--text-primary);
+	font: inherit;
+
+	cursor: pointer;
+	transition: color 0.18s ease;
+}
+
+.category-trigger:hover {
+	color: var(--bg-page);
+	background-color: var(--text-primary);
+	border-radius: 7px;
+}
+
+.category-trigger:hover .category-trigger-icon {
+	color: var(--bg-page);
+}
+.category-trigger-label {
+	font-size: var(--font-sm);
+	font-weight: 600;
+	letter-spacing: 0.2px;
+}
+
+.category-trigger-icon {
+	font-size: 24px;
+	transition: transform 0.18s ease, color 0.18s ease;
+}
+
+.category-trigger-icon.is-open {
+	transform: rotate(180deg);
+}
+
+/* ===== FIX: el trigger NO debe cambiar tamaño en hover ===== */
+
+.category-trigger {
+    line-height: 1;          /* evita saltos raros */
+    transform: none !important;
+}
+
+.category-trigger:hover {
+    transform: none !important;
+}
+
+/* si en tu proyecto alguien subraya con border-bottom, lo anulamos */
+.category-trigger,
+.category-trigger:hover {
+    border-bottom: 0 !important;
+    padding-bottom: var(--space-3) !important; /* mantiene el mismo padding */
+}
+
+/* subrayado sin alterar layout */
+.category-trigger-label {
+    position: relative;
+    display: inline-block;
+}
+
+.category-trigger-label::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: var(--text-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.18s ease;
+}
+
+.category-trigger:hover .category-trigger-label::after {
+    transform: scaleX(1);
+	background: var(--bg-page);
+}
+
+
+.category-panel {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 100%;
+
+	background: var(--bg-header);
+	border-bottom: 1px solid var(--border-default);
+
+	opacity: 0;
+	transform: translateY(-6px);
+	pointer-events: none;
+
+	transition: opacity 0.18s ease, transform 0.18s ease;
+	z-index: 999;
+
+	/* overlay feel */
+	box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+}
+
+.category-panel.open {
+	opacity: 1;
+	transform: translateY(0);
+	pointer-events: auto;
+}
+
+/* TEXTO + WRAP (no botones/pills) */
+.category-grid {
+	padding: var(--space-3) var(--space-4);
+
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+
+	column-gap: 22px;
+	row-gap: 14px;
+
+	max-height: calc((1.2em * 3) + (14px * 2) + (var(--space-3) * 2));
+	overflow-y: auto;
+}
+
+.category-cell {
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	box-shadow: none;
+
+	width: auto;
+	flex: 0 0 auto;
+
+	color: var(--text-primary);
+	font: inherit;
+	font-size: var(--font-sm);
+	font-weight: 500;
+
+	white-space: normal;
+	overflow: visible;
+	text-overflow: unset;
+
+	cursor: pointer;
+	position: relative;
+	transition: color 0.18s ease, border-radius 0.18s ease, background-color 0.23s ease;
+	padding: 4px 8px;
+}
+
+.category-cell:hover {
+	color: var(--bg-page);
+	border-radius: 5px;
+}
+
+.category-cell::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: -6px;
+
+	height: 2px;
+	background: var(--text-accent);
+
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.18s ease;
+}
+
+.category-cell:hover::after,
+.category-cell.active::after {
+	transform: scaleX(1);
+}
+
+.category-cell.active {
+	text-shadow: 0px 0px 2px var(--text-accent);
+	color: var(--text-primary);
 }

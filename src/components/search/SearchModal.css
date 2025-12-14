@@ -1,55 +1,342 @@
-.search-overlay {
+/* ============================
+   OVERLAY
+============================ */
+.search-overlay{
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(3px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 5000;
+    z-index: 9999;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+
+    padding: var(--space-5);
 }
 
-.search-modal {
-    width: min(500px, 90%);
-    background: var(--card);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 0 25px rgba(0,0,0,0.4);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+/* ============================
+   MODAL CONTENEDOR
+============================ */
+.search-modal{
+    width: min(520px, 92vw);
+    height: min(76vh, 640px);
+
+    display: grid;
+    grid-template-rows: 1fr;
+
+    padding: var(--space-5);
+    border-radius: 18px;
+
+    background: rgba(26, 26, 26, 0.5);
+    border: 1px solid var(--border-default);
+    box-shadow: 0 20px 60px var(--shadow-medium);
+
+    overflow: hidden;
+
+    /* ✅ FIX: forzar que el contenido se estire a lo ancho
+       (esto mata cualquier reset global que ponga justify-items:start) */
+    justify-items: stretch;
+    align-items: stretch;
 }
 
-.search-input {
+/* ============================
+   VISTAS INTERNAS
+============================ */
+.search-view{
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: var(--space-4);
+
+    min-height: 0;
+
+    /* ✅ FIX: ancho completo (evita shrink-to-fit) */
     width: 100%;
-    padding: 1rem 1.3rem;
-    border-radius: 14px;
-    border: 1px solid var(--border-default);
-    background: var(--bg-hover);
-    color: var(--text-primary);
-    font-size: 1.1rem;
+    min-width: 0;
+    justify-items: stretch;
+    align-items: stretch;
 }
 
-.category-list {
-    max-height: 350px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-}
+/* ============================
+   INPUT
+============================ */
+.search-input{
+    width: 100%;
+    box-sizing: border-box;
 
-.category-item {
-    padding: 0.8rem 1rem;
-    background: var(--bg-hover);
+    padding: var(--space-4);
     border-radius: 12px;
-    border: 1px solid var(--border-default);
+
+    background-color: var(--bg-surface);
     color: var(--text-primary);
-    font-size: 1rem;
-    text-align: left;
-    transition: 0.2s;
+
+    border: 1px solid var(--border-default);
 }
 
-.category-item:hover {
-    background: var(--text-primary);
-    color: var(--bg-page);
+.search-input::placeholder{
+    color: var(--text-secondary);
+}
+
+.search-input:focus{
+    border-color: var(--text-accent);
+}
+
+/* ============================
+   LISTA DE CATEGORÍAS
+============================ */
+.category-list{
+    background-color: var(--bg-surface);
+    border-radius: 14px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+
+    padding: var(--space-2);
+
+    box-shadow: inset 0 0 0 1px var(--border-default);
+
+    /* ✅ FIX: ocupa todo el ancho disponible */
+    width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+    align-self: stretch;
+}
+
+/* Scrollbar */
+.category-list{
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-hover) transparent;
+}
+.category-list::-webkit-scrollbar{
+    width: 10px;
+}
+.category-list::-webkit-scrollbar-track{
+    background: transparent;
+}
+.category-list::-webkit-scrollbar-thumb{
+    background: var(--bg-hover);
+    border-radius: 999px;
+}
+.category-list::-webkit-scrollbar-thumb:hover{
+    background: var(--text-secondary);
+}
+
+/* ============================
+   ITEM CATEGORÍA
+============================ */
+.category-item{
+    width: 100%;
+    box-sizing: border-box;
+
+    display: block;
+    text-align: left;
+
+    padding: var(--space-4);
+    margin-bottom: var(--space-2);
+
+    border-radius: 12px;
+    background-color: var(--bg-surface);
+    color: var(--text-primary);
+
+    border: 1px solid transparent;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.15s ease,
+        border-color 0.2s ease;
+}
+
+.category-item:hover{
+    background-color: var(--bg-hover);
+    border-color: var(--border-default);
+    transform: translateX(2px);
+    text-shadow: 0px 0px 15px var(--text-secondary);
+    color: var(--text-primary);
+}
+
+.category-item:active{
+    transform: translateX(2px) scale(0.98);
+}
+
+.category-item:focus-visible{
+    outline: 2px solid var(--text-accent);
+    outline-offset: 2px;
+}
+
+/* ============================
+   HEADER CATEGORÍA
+============================ */
+.category-header{
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+/* Botón volver */
+.back-button{
+    width: 44px;
+    height: 44px;
+
+    padding: 0;
+    border-radius: 999px;
+
+    background-color: rgba(0, 0, 0, 0.35);
+    border: 1px solid var(--border-default);
+    color: var(--text-primary);
+
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.back-button:hover{
+    background-color: rgba(0, 0, 0, 0.55);
+    transform: none;
+    color: var(--text-primary);
+}
+
+/* Título */
+.category-title{
+    font-size: var(--font-lg);
+    color: var(--text-primary);
+}
+
+/* ============================
+   PANEL DE DISEÑOS (RECOMENDADO)
+   - mantiene look consistente y tapa “sobrante”
+============================ */
+.design-panel{
+    height: 100%;
+    min-height: 0;
+
+    background-color: var(--bg-surface);
+    border-radius: 14px;
+    padding: var(--space-2);
+
+    box-shadow: inset 0 0 0 1px var(--border-default);
+
+    overflow: hidden;
+
+    /* ✅ FIX: ancho completo */
+    width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+    align-self: stretch;
+}
+
+/* ============================
+   GRID DE DISEÑOS (100%)
+============================ */
+.design-grid{
+    height: 100%;
+    min-height: 0;
+
+    /* ✅ FIX: ancho completo + evitar shrink-to-fit */
+    width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+    align-self: stretch;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+
+    /* scrollbar no tape contenido */
+    padding-right: 10px;
+    align-items: start;
+}
+
+.design-grid--short{
+    grid-template-rows: repeat(4, 1fr);
+}
+
+@media (min-width: 768px){
+    .design-grid--short{
+        grid-template-rows: repeat(3, 1fr);
+    }
+}
+
+
+
+
+
+/* Scrollbar grid */
+.design-grid{
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-hover) transparent;
+}
+.design-grid::-webkit-scrollbar{
+    width: 10px;
+}
+.design-grid::-webkit-scrollbar-track{
+    background: transparent;
+}
+.design-grid::-webkit-scrollbar-thumb{
+    background: var(--bg-hover);
+    border-radius: 999px;
+}
+.design-grid::-webkit-scrollbar-thumb:hover{
+    background: var(--text-secondary);
+}
+
+/* ============================
+   CARD DISEÑO
+============================ */
+.design-card{
+    padding: var(--space-2);
+    border-radius: 14px;
+
+    background-color: var(--bg-surface);
+    border: 1px solid transparent;
+    color: var(--text-primary);
+
+    text-align: left;
+
+    transition:
+        transform 0.15s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.design-card:hover{
+    background-color: var(--bg-hover);
+    border-color: var(--border-default);
+    transform: translateY(-2px);
+}
+
+/* ============================
+   MOCKUP
+============================ */
+.design-thumb{
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    border-radius: 12px;
+    overflow: hidden;
+
+    background-color: var(--bg-page);
+    border: 1px solid var(--border-default);
+    box-shadow: 0 14px 30px var(--shadow-medium);
+
+    display: grid;
+    place-items: center;
+}
+
+.design-thumb img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.design-meta{
+    margin-top: var(--space-2);
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
 }

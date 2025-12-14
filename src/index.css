@@ -44,6 +44,13 @@
 
   /* HEIGHTS */
   --header-height: 64px;
+
+  /* FONTS */
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-display: "Space Grotesk", system-ui, -apple-system, sans-serif;
+
+
+  
 }
 
 
@@ -88,7 +95,7 @@ body {
   ESTILOS GLOBALES DEL SITIO
 ------------------------------------------------------ */
 body {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   font-size: var(--font-base);
   background-color: var(--bg-page);
   color: var(--text-primary);
@@ -98,11 +105,13 @@ body {
 
 /* --------- TITULOS --------- */
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  line-height: 1.2;
+  font-family: var(--font-display);
+  font-weight: 700;            /* 700 se ve genérico/duro con Inter */
+  line-height: 1.15;
   color: var(--text-primary);
-  letter-spacing: -0.5px;
+  letter-spacing: -0.02em;     /* -0.5px es demasiado fijo */
 }
+
 
 h1 { font-size: var(--font-4xl); }
 h2 { font-size: var(--font-3xl); }

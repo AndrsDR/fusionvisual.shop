@@ -3,11 +3,11 @@ import "./Catalog.css";
 import designsData from "../../mocks/designs.json";
 import { useEffect, useState } from "react";
 import { CatalogCard } from "../../components/catalog/CatalogCard";
-import { useNavigate } from "react-router-dom";
+import { useViewDesign } from "../../hooks/useViewDesign";
 
 export function Catalog() {
     const [items, setItems] = useState([]);
-    const navigate = useNavigate();
+    const { viewDesign } = useViewDesign();
 
     useEffect(() => {
         if (!designsData || !Array.isArray(designsData)) return;
@@ -34,9 +34,7 @@ export function Catalog() {
 
     // Navega al detalle con los datos del item
     const handleView = (item) => {
-        navigate(`/product/${item.id}`, {
-            state: item
-        });
+        viewDesign(item);
     };
 
     return (
@@ -45,7 +43,6 @@ export function Catalog() {
                 <h2 className="catalog-title">Diseños destacados</h2>
                 <p className="catalog-subtitle">Selecciona tu favorito</p>
             </div>
-
 
             <div className="catalog-grid">
                 {items.map((item) => (

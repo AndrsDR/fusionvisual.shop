@@ -41,6 +41,10 @@ COLUMNA IZQUIERDA — IMAGEN DEL PRODUCTO
     background: var(--bg-surface);
 
     box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+    object-fit: cover;
+    object-position: center;
+
+    display: block;
 }
 
 /* ====================================================

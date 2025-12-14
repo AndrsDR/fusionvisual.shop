@@ -88,3 +88,255 @@
     border-radius: 999px;
     font-size: var(--font-base);
 }
+
+/* ===========================
+CATEGORY DROPDOWN (nuevo)
+=========================== */
+
+/* Contenedor de todo el componente: ocupa el alto normal (solo el trigger) */
+.category-dropdown {
+    position: relative;
+    z-index: 50; /* por encima del resto del customizer */
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border-default);
+}
+
+/* Botón "barra plegable" */
+.category-trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: var(--space-3) var(--space-4);
+    background: transparent;
+    border: 0;
+    color: var(--text-primary);
+    font: inherit;
+
+    cursor: pointer;
+}
+
+.category-trigger-label {
+    font-size: var(--font-sm);
+    font-weight: 600;
+    letter-spacing: 0.2px;
+}
+
+.category-trigger-icon {
+    font-size: 24px;
+    transition: transform 0.18s ease;
+}
+
+.category-trigger-icon.is-open {
+    transform: rotate(180deg);
+}
+
+/* Panel desplegable: overlay absolute, NO empuja layout */
+.category-panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border-default);
+
+    /* oculto por defecto */
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 999; /* súper arriba */
+}
+
+.category-panel.open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Grid de categorías */
+.category-grid {
+    padding: var(--space-3) var(--space-4);
+
+    display: grid;
+    gap: var(--space-3);
+
+    /* columnas responsivas */
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+
+    /* máximo 3 filas visibles -> si hay más, scroll vertical */
+    /* Ajusta 46px si cambias el padding/altura de category-cell */
+    max-height: calc((46px * 3) + (var(--space-3) * 2) + (var(--space-3) * 2));
+    overflow-y: auto;
+}
+
+/* “contenedores” de cada categoría */
+.category-cell {
+    height: 46px;
+    padding: 0 var(--space-4);
+    border-radius: 999px;
+
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-sm);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    cursor: pointer;
+    transition: border-color 0.18s ease, transform 0.12s ease, background 0.18s ease;
+}
+
+.category-cell:hover {
+    border-color: var(--text-accent);
+    transform: translateY(-1px);
+}
+
+/* categoría activa */
+.category-cell.active {
+    background: var(--text-primary);
+    color: var(--bg-surface);
+    border-color: transparent;
+}
+
+/* Scrollbar del panel (coherente con tu estilo) */
+.category-grid::-webkit-scrollbar {
+    width: 8px;
+}
+.category-grid::-webkit-scrollbar-track {
+    background: var(--bg-surface);
+}
+.category-grid::-webkit-scrollbar-thumb {
+    background: var(--bg-hover);
+    border-radius: 8px;
+}
+.category-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* ===========================
+OPCIONAL: si todavía existe .category-bar en tu CSS viejo,
+lo escondemos para que no choque (por si algún lado lo usa)
+=========================== */
+.category-bar {
+    display: none;
+}
+
+
+/* ===========================
+FIX 1: Trigger sin crecer en hover
+=========================== */
+.category-trigger {
+    transition: color 0.18s ease;
+}
+
+.category-trigger:hover {
+    color: var(--text-accent);
+}
+
+/* (por si el icono también cambiaba raro) */
+.category-trigger-icon {
+    transition: transform 0.18s ease, color 0.18s ease;
+}
+.category-trigger:hover .category-trigger-icon {
+    color: var(--text-accent);
+}
+
+/* ===========================
+FIX 2: Categorías como TEXTO (no “pills”)
++ auto ancho por texto
++ wrap a siguiente fila
++ max 3 filas visibles + scroll vertical
+=========================== */
+
+/* reemplazamos el grid por flex-wrap */
+.category-grid {
+    padding: var(--space-3) var(--space-4);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    /* separación horizontal/vertical */
+    column-gap: 22px;
+    row-gap: 14px;
+
+    /* 3 filas máximo (ajusta si quieres más/menos aire) */
+    max-height: calc((1.2em * 3) + (14px * 2) + (var(--space-3) * 2));
+    overflow-y: auto;
+}
+
+/* ahora cada “celda” es texto, tamaño automático */
+.category-cell {
+    height: auto;
+    padding: 0;                 /* sin padding tipo botón */
+    border: 0;                  /* sin borde */
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+
+    width: auto;                /* se ajusta al texto */
+    flex: 0 0 auto;             /* no estira */
+    justify-content: flex-start;
+
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-sm);
+    font-weight: 500;
+
+    /* si el texto es largo, NO lo cortes: que ocupe lo que necesite
+       y si ya no cabe, wrap a la siguiente fila */
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+
+    cursor: pointer;
+    position: relative;
+
+    transition: color 0.18s ease;
+}
+
+/* Hover = solo color + subrayado (sin transform) */
+.category-cell:hover {
+    color: var(--text-accent);
+    transform: none;
+}
+
+/* Subrayado en hover/activo */
+.category-cell::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 2px;
+    background: var(--text-accent);
+
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.18s ease;
+}
+
+.category-cell:hover::after,
+.category-cell.active::after {
+    transform: scaleX(1);
+}
+
+/* Activo: solo color (sin “pill”) */
+.category-cell.active {
+    background: transparent;
+    color: var(--text-accent);
+    border: 0;
+}
+
