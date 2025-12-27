@@ -1,17 +1,27 @@
 // src/context/CartContext.jsx
 import { useReducer, createContext, useContext } from "react";
 import { cartReducer, cartInitialState } from "../reducers/cart";
+import { computePriceBreakdown } from "../pricing/pricing";
+
 
 export const CartContext = createContext();
 
 function useCartReducer() {
     const [state, dispatch] = useReducer(cartReducer, cartInitialState);
 
-    const addToCart = (product, quantity = 1) =>
+    const addToCart = (product, quantity = 1) => {
+        const breakdown = computePriceBreakdown(product);
+        
         dispatch({
             type: "ADD_TO_CART",
-            payload: { ...product, quantity }
+            payload: {
+                ...product,
+                quantity,
+                unitPrice: breakdown.unitPrice,
+                priceBreakdown: breakdown, // opcional
+            }
         });
+    };
 
     const decrementFromCart = (product) =>
         dispatch({
