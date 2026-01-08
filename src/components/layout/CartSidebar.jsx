@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePayPalCheckout } from "../../hooks/usePayPalCheckout.js";
 import "./CartSidebar.css";
 import { useCart } from "../../context/CartContext.jsx";
 import { useCartUI } from "../../context/CartUIContext.jsx";
@@ -6,12 +7,6 @@ import { computePriceBreakdown, computeUnitPrice } from "../../pricing/pricing.j
 
 const SHEETS_WEBHOOK_URL =
     "https://script.google.com/macros/s/AKfycby0Xaf6r--8orb0ql_lXhsgTHD9A6xhGzqKYvAq9-a4VkHFPBwpqwKloXTZAFvKkMylhg/exec";
-
-// ✅ Backend (local o prod). En prod puedes dejar VITE_API_BASE_URL vacío y usar rutas relativas.
-const API_BASE_URL = "http://localhost:4242";
-
-// ✅ key para persistir pedido pendiente durante el redirect de PayPal
-const PENDING_ORDER_KEY = "fv_pending_order";
 
 /* =========================
    Helpers (puros)
@@ -135,17 +130,16 @@ function CartItemInfo({ item }) {
                     : item.name || item.designId || "Diseño"}
             </h3>
 
-            {/* Talla (sin precio) */}
             <p className="cart-item-meta cart-meta-row">
                 <span>Talla {item.size}</span>
             </p>
 
-            {/* Tela + precio */}
             <p className="cart-item-meta cart-meta-row">
-                <span>Tela: {item.fabric || "Algodón"} - {money(breakdown.fabricDelta)}</span>
+                <span>
+                    Tela: {item.fabric || "Algodón"} - {money(breakdown.fabricDelta)}
+                </span>
             </p>
 
-            {/* Tipo camisa + precio */}
             {item.shirtType && (
                 <p className="cart-item-meta cart-meta-row">
                     <span>
@@ -160,14 +154,14 @@ function CartItemInfo({ item }) {
                 </p>
             )}
 
-            {/* Frente/Espalda + precio */}
             {item.sidesMode && (
                 <p className="cart-item-meta cart-meta-row">
-                    <span><SidesLabel mode={item.sidesMode} /> - {money(breakdown.sidesDelta)}</span>
+                    <span>
+                        <SidesLabel mode={item.sidesMode} /> - {money(breakdown.sidesDelta)}
+                    </span>
                 </p>
             )}
 
-            {/* Diseño + precio fijo */}
             <p className="cart-item-meta cart-meta-row">
                 <span>Diseño - {money(breakdown.designFlat)}</span>
             </p>
@@ -226,7 +220,7 @@ function CartBody({ cart, onRemoveOrDecrement }) {
                         <CartItemRow
                             key={item.id}
                             item={item}
-                            onRemoveOrDecrement={() => onRemoveOrDecrement(item)}
+                            onRemoveOrDecrement={onRemoveOrDecrement}
                         />
                     ))}
                 </ul>
@@ -276,11 +270,14 @@ function CheckoutModal({
     isSubmitting,
     orderId,
     total,
-    paymentStatus,
     onClose,
     onSubmit,
-    onStartPaypal
+    paymentStatus,
+    paypalContainerRef,
+    isPayPalReady,
+    isPayPalProcessing
 }) {
+    
     return (
         <div className="cart-checkout-modal">
             <div className="cart-checkout-card">
@@ -300,9 +297,9 @@ function CheckoutModal({
                 {!submitted ? (
                     <>
                         <p className="checkout-text">
-                            Completa tus datos para preparar tu pedido.
+                            Completa tus datos y confirma tu pedido.
                             <br />
-                            Después podrás pagar con PayPal.
+                            (El pago se activará más adelante.)
                         </p>
 
                         <form onSubmit={onSubmit} className="checkout-form">
@@ -335,13 +332,13 @@ function CheckoutModal({
                                 className="checkout-submit-btn"
                                 disabled={isSubmitting}
                             >
-                                {isSubmitting ? "Procesando..." : "Continuar"}
+                                {isSubmitting ? "Procesando..." : "Comprar"}
                             </button>
                         </form>
                     </>
                 ) : (
                     <div className="checkout-thanks">
-                        <p><strong>Pedido listo ✅</strong></p>
+                        <p><strong>Pedido registrado ✅</strong></p>
 
                         <p style={{ marginTop: "0.5rem" }}>
                             Total: <strong>${Number(total || 0).toFixed(2)}</strong>
@@ -349,30 +346,49 @@ function CheckoutModal({
 
                         {orderId ? (
                             <p style={{ marginTop: "0.5rem" }}>
-                                Folio interno: <strong>{orderId}</strong>
+                                Folio: <strong>{orderId}</strong>
                             </p>
                         ) : null}
 
+                        <p style={{ marginTop: "0.75rem" }}>
+                            Te contactaremos para coordinar el pago y la entrega.
+                        </p>
+
+                        <p style={{ marginTop: "0.75rem" }}>
+                            (PayPal se activará cuando esté listo el sistema de pagos.)
+                        </p>
+
                         {paymentStatus === "PAID" ? (
-                            <p style={{ marginTop: "0.75rem" }}>
-                                Pago confirmado ✅ ¡Gracias por tu compra!
-                            </p>
+                            <>
+                                <p style={{ marginTop: "0.75rem" }}>
+                                    Pago confirmado ✅ ¡Gracias por tu compra!
+                                </p>
+                                <p style={{ marginTop: "0.75rem" }}>
+                                    Te contactaremos para coordinar la entrega.
+                                </p>
+                            </>
                         ) : (
                             <>
                                 <p style={{ marginTop: "0.75rem" }}>
-                                    Presiona para abrir PayPal y aprobar el pago.
-                                    <br />
-                                    Al regresar, el pago se confirmará automáticamente y se registrará el pedido.
+                                    Paga con PayPal para confirmar tu pedido.
                                 </p>
 
-                                <button
-                                    type="button"
-                                    className="checkout-submit-btn"
-                                    onClick={onStartPaypal}
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? "Abriendo PayPal..." : "Pagar con PayPal"}
-                                </button>
+                                {!isPayPalReady ? (
+                                    <p style={{ marginTop: "0.5rem" }}>
+                                        Cargando PayPal...
+                                    </p>
+                                ) : null}
+
+                                {isPayPalProcessing || isSubmitting ? (
+                                    <p style={{ marginTop: "0.5rem" }}>
+                                        Procesando...
+                                    </p>
+                                ) : null}
+
+                                <div
+                                    ref={paypalContainerRef}
+                                    style={{ marginTop: "0.75rem" }}
+                                />
                             </>
                         )}
                     </div>
@@ -395,15 +411,33 @@ export function CartSidebar() {
     const [submitted, setSubmitted] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
-
     const [orderId, setOrderId] = useState("");
-    const [paypalOrderId, setPaypalOrderId] = useState("");
     const [paymentStatus, setPaymentStatus] = useState("PENDING"); // PENDING | PAID
-
     const [pendingPayload, setPendingPayload] = useState(null);
+
+    const [paypalOrderId, setPaypalOrderId] = useState("");
+
+    const [isPayPalReady, setIsPayPalReady] = useState(false);
+    const [isPayPalProcessing, setIsPayPalProcessing] = useState(false);
+
+    const [submittedTotal, setSubmittedTotal] = useState(0);
 
     const total = calcTotal(cart);
     const cartIsEmpty = cart.length === 0;
+
+    useEffect(() => {
+        if (isCartOpen || showCheckout) {
+            document.body.classList.add("modal-open");
+        } else {
+            document.body.classList.remove("modal-open");
+        }
+    
+        // limpieza por seguridad
+        return () => {
+            document.body.classList.remove("modal-open");
+        };
+    }, [isCartOpen, showCheckout]);
+    
 
     const resetCheckoutState = () => {
         setShowCheckout(false);
@@ -413,13 +447,17 @@ export function CartSidebar() {
         setIsSubmitting(false);
         setOrderId("");
         setPaypalOrderId("");
+        setSubmittedTotal(0);
         setPaymentStatus("PENDING");
         setPendingPayload(null);
-        sessionStorage.removeItem(PENDING_ORDER_KEY);
+        setIsPayPalProcessing(false);
     };
 
     const handleOverlayClick = () => {
-        if (isSubmitting) return;
+        if (isSubmitting || isPayPalProcessing) return;
+
+        if (showCheckout && submitted && paymentStatus === "PENDING") return;
+
         if (showCheckout) resetCheckoutState();
         else closeCart();
     };
@@ -433,9 +471,115 @@ export function CartSidebar() {
         }
     };
 
+    const paypalAmount = submitted ? submittedTotal : total;
+
+    const paypalEnabled =
+        showCheckout &&
+        submitted &&
+        paymentStatus === "PENDING" &&
+        !!pendingPayload &&
+        !isSubmitting;
+
+    // ✅ CLIENT ID: usa env de Vite (recomendado)
+    const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID || "";
+
+    useEffect(() => {
+        if (!paypalEnabled) {
+            setIsPayPalReady(false);
+            return;
+        }
+        setIsPayPalReady(!!window.paypal?.Buttons);
+    }, [paypalEnabled]);
+
+    const { containerRef: paypalContainerRef, isReady, isProcessing } = usePayPalCheckout({
+        enabled: paypalEnabled,
+        clientId: paypalClientId,
+        currency: "MXN",
+
+        createOrder: (data, actions) => {
+            const value = String(Number(paypalAmount || 0).toFixed(2));
+
+            return actions.order.create({
+                purchase_units: [
+                    {
+                        amount: {
+                            currency_code: "MXN",
+                            value
+                        }
+                    }
+                ]
+            });
+        },
+
+        onApprove: async (data, actions) => {
+            try {
+                setIsPayPalProcessing(true);
+                setIsSubmitting(true);
+
+                const details = await actions.order.capture();
+
+                setPaypalOrderId(details?.id || data?.orderID || "");
+
+                if (!pendingPayload) {
+                    throw new Error("No hay pedido pendiente para registrar.");
+                }
+
+                const paidPayload = {
+                    ...pendingPayload,
+                    status: "PAID",
+                    paypal: {
+                        id: details?.id || data?.orderID || "",
+                        payerEmail: details?.payer?.email_address || ""
+                    }
+                };
+
+                const res = await fetch(SHEETS_WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(paidPayload)
+                });
+
+                const json = await res.json().catch(() => null);
+
+                if (!res.ok || !json?.ok) {
+                    throw new Error(json?.error || "No se pudo registrar el pedido en Sheets.");
+                }
+
+                setPaymentStatus("PAID");
+                clearCart();
+            } catch (err) {
+                console.error("❌ PayPal approve -> Sheets error:", err);
+                alert(err?.message || "Error registrando el pedido pagado.");
+            } finally {
+                setIsSubmitting(false);
+                setIsPayPalProcessing(false);
+            }
+        },
+
+        onCancel: () => {
+            alert("Pago cancelado. No se registró ningún pedido.");
+            setIsPayPalProcessing(false);
+        },
+
+        onError: (err) => {
+            console.error("❌ PayPal error:", err);
+            alert("Hubo un error con PayPal. Intenta de nuevo.");
+            setIsPayPalProcessing(false);
+        }
+    });
+
+    // ✅ si quieres que tu UI use el estado REAL del hook, sincronízalo aquí
+    useEffect(() => {
+        setIsPayPalReady(isReady);
+    }, [isReady]);
+
+    useEffect(() => {
+        setIsPayPalProcessing(isProcessing);
+    }, [isProcessing]);
+
     const handleCheckoutSubmit = (e) => {
         e.preventDefault();
-        if (isSubmitting) return;
+        if (isSubmitting || isPayPalProcessing) return;
 
         if (!contact.trim()) {
             alert("Por favor escribe tu número de contacto o correo.");
@@ -450,162 +594,25 @@ export function CartSidebar() {
             return;
         }
 
-        // ✅ Pedido pendiente (NO se manda a Sheets todavía)
+        const folio = `FV-${Date.now()}`;
+        const totalSnapshot = Number(total || 0);
+
+        setSubmittedTotal(totalSnapshot);
+        setOrderId(folio);
+
         const payload = {
+            orderId: folio,
             contact,
             address,
+            total: totalSnapshot,
+            status: "PENDING_PAYMENT",
             items: buildItemsForSheet(cart)
         };
 
         setPendingPayload(payload);
-        sessionStorage.setItem(PENDING_ORDER_KEY, JSON.stringify(payload));
-
+        setPaymentStatus("PENDING");
         setSubmitted(true);
     };
-
-    const handleStartPaypal = async () => {
-        if (isSubmitting) return;
-
-        if (!submitted) {
-            alert("Primero completa tus datos y presiona Continuar.");
-            return;
-        }
-
-        const stored = sessionStorage.getItem(PENDING_ORDER_KEY);
-        const pending = pendingPayload || (stored ? JSON.parse(stored) : null);
-
-        if (!pending) {
-            alert("No hay datos pendientes. Cierra y vuelve a abrir el checkout.");
-            return;
-        }
-
-        if (!total || Number(total) <= 0) {
-            alert("El total está en $0. Revisa precios antes de pagar.");
-            return;
-        }
-
-        try {
-            setIsSubmitting(true);
-
-            const res = await fetch(`${API_BASE_URL}/api/paypal/create-order`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    orderId: orderId || "FV-TMP",
-                    total: Number(total),
-                    currency: "MXN"
-                })
-            });
-
-            const raw = await res.text();
-
-            let data;
-            try {
-                data = JSON.parse(raw);
-            } catch {
-                data = { ok: false, error: raw };
-            }
-
-            if (!res.ok) {
-                console.error("❌ PayPal create-order HTTP error:", res.status, data);
-                throw new Error(data?.error || `HTTP ${res.status}`);
-            }
-
-            if (!data?.ok || !data?.approveUrl || !data?.paypalOrderId) {
-                console.error("❌ PayPal create-order bad payload:", data);
-                throw new Error(data?.error || "No se pudo generar el link de pago.");
-            }
-
-            setPaypalOrderId(data.paypalOrderId);
-
-            // ✅ IMPORTANTE: el payload ya está en sessionStorage para sobrevivir el redirect
-            window.location.href = data.approveUrl;
-
-        } catch (err) {
-            console.error("❌ handleStartPaypal error:", err);
-            alert(err?.message || "Error al iniciar el pago con PayPal.");
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    // ✅ Auto-capture al regresar de PayPal
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-
-        const token = params.get("token");
-        const canceled = params.get("canceled") || params.get("cancel");
-
-        if (canceled) {
-            window.history.replaceState({}, "", window.location.pathname);
-            alert("Pago cancelado.");
-            return;
-        }
-
-        if (!token) return;
-
-        (async () => {
-            try {
-                setIsSubmitting(true);
-
-                // Recupera payload sobreviviente al redirect
-                const stored = sessionStorage.getItem(PENDING_ORDER_KEY);
-                const pending = stored ? JSON.parse(stored) : null;
-
-                setPaypalOrderId(token);
-
-                // Abre modal por si el usuario aterriza fuera del carrito
-                setShowCheckout(true);
-                setSubmitted(true);
-
-                if (!pending) {
-                    throw new Error("No hay pedido pendiente para registrar en Sheets.");
-                }
-
-                // 1) Captura en backend
-                const res = await fetch(`${API_BASE_URL}/api/paypal/capture-order`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ paypalOrderId: token })
-                });
-
-                const data = await res.json();
-
-                if (!data?.ok) {
-                    throw new Error(data?.error || "No se pudo capturar el pago.");
-                }
-
-                // 2) Registrar en Sheets SOLO si ya se capturó
-                const sheetRes = await fetch(SHEETS_WEBHOOK_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(pending)
-                });
-
-                const sheetData = await sheetRes.json();
-
-                if (!sheetData?.ok) {
-                    throw new Error(sheetData?.error || "No se pudo registrar el pedido en Sheets.");
-                }
-
-                // 3) Finalizar
-                setPendingPayload(null);
-                sessionStorage.removeItem(PENDING_ORDER_KEY);
-
-                setPaymentStatus("PAID");
-                clearCart();
-
-                window.history.replaceState({}, "", window.location.pathname);
-
-            } catch (err) {
-                console.error("❌ Auto-capture error:", err);
-                alert(err?.message || "Error confirmando el pago.");
-                window.history.replaceState({}, "", window.location.pathname);
-            } finally {
-                setIsSubmitting(false);
-            }
-        })();
-    }, [clearCart]);
 
     if (!isCartOpen) return null;
 
@@ -635,14 +642,16 @@ export function CartSidebar() {
                         submitted={submitted}
                         isSubmitting={isSubmitting}
                         orderId={orderId}
-                        total={total}
+                        total={submitted ? submittedTotal : total}
                         paymentStatus={paymentStatus}
+                        paypalContainerRef={paypalContainerRef}
+                        isPayPalReady={isPayPalReady}
+                        isPayPalProcessing={isPayPalProcessing}
                         onClose={() => {
-                            if (isSubmitting) return;
+                            if (isSubmitting || isPayPalProcessing) return;
                             resetCheckoutState();
                         }}
                         onSubmit={handleCheckoutSubmit}
-                        onStartPaypal={handleStartPaypal}
                     />
                 )}
             </aside>
