@@ -8,7 +8,11 @@ export function CustomizerControls({
     selectedFabric,
     onSelectFabric,
     selectedShirtType,
-    onSelectShirtType
+    onSelectShirtType,
+
+    /* === NUEVO === */
+    enableBack,
+    onToggleBack
 }) {
     const colors = shirtData.images;
     const shirtTypes = shirtData.types;
@@ -33,7 +37,7 @@ export function CustomizerControls({
                                         : "1px solid var(--border-default)"
                             }}
                             onClick={() => onSelectColor(c.colorId)}
-                        ></span>
+                        />
                     ))}
                 </div>
             </label>
@@ -83,6 +87,22 @@ export function CustomizerControls({
                     <option value="XXL">XXL</option>
                 </select>
             </label>
+
+            {/* === MODIFICAR ESPALDA (solo checkbox) === */}
+            <div className="control-group">
+                <div className="side-toggle">
+                    <input
+                        id="enableBack"
+                        type="checkbox"
+                        className="toggle-input"
+                        checked={enableBack}
+                        onChange={onToggleBack}
+                    />
+                    <label htmlFor="enableBack" className="toggle-label">
+                        Modificar espalda
+                    </label>
+                </div>
+            </div>
         </div>
     );
 }

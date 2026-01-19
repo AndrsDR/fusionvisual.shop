@@ -11,7 +11,6 @@ import { ShirtPreview } from "../../components/customizer/ShirtPreview.jsx";
 import { useCart } from "../../context/CartContext.jsx";
 
 export function CustomizerSection({ designFromDetail }) {
-
     const [selectedCategory, setSelectedCategory] = useState(
         designsData[0]?.category || ""
     );
@@ -26,7 +25,7 @@ export function CustomizerSection({ designFromDetail }) {
     const [selectedSize, setSelectedSize] = useState("M");
     const [selectedFabric, setSelectedFabric] = useState("cotton");
 
-    // tipo de camisa: basic | polo | v-neck
+    // basic | polo | v-neck
     const [selectedShirtType, setSelectedShirtType] = useState("basic");
 
     const colors = shirtData.images;
@@ -34,10 +33,9 @@ export function CustomizerSection({ designFromDetail }) {
 
     const getEffectiveColor = () => {
         const exists = colors.some((c) => c.colorId === selectedColor);
-        return exists ? selectedColor : (colors[0]?.colorId || defaultColorId);
+        return exists ? selectedColor : colors[0]?.colorId || defaultColorId;
     };
 
-    // 👇 ahora resolvemos según TIPO + LADO + COLOR
     const resolveShirtImage = (side) => {
         const colorId = getEffectiveColor();
         return `/shirts/${selectedShirtType}/${side}/${colorId}.png`;
@@ -52,7 +50,7 @@ export function CustomizerSection({ designFromDetail }) {
         console.log("🛒 Carrito actualizado (customizer):", cart);
     }, [cart]);
 
-    // Si venimos desde detalle, preseleccionar diseño en el frente
+    // Preselección desde detalle
     useEffect(() => {
         if (!designFromDetail) return;
 
@@ -79,6 +77,14 @@ export function CustomizerSection({ designFromDetail }) {
         }
     };
 
+    const handleToggleBack = () => {
+        const newValue = !enableBack;
+        setEnableBack(newValue);
+        setSelectedSide(newValue ? "back" : "front");
+
+        if (!newValue) setBackDesign(null);
+    };
+
     const handleBuy = () => {
         if (!frontDesign && !backDesign) {
             alert("Debes elegir al menos un diseño.");
@@ -87,7 +93,9 @@ export function CustomizerSection({ designFromDetail }) {
 
         const effectiveColor = getEffectiveColor();
 
-        const cartItemId = `custom-${frontDesign?.id || "none"}-${backDesign?.id || "none"}-${selectedShirtType}-${effectiveColor}-${selectedSize}-${selectedFabric}`;
+        const cartItemId = `custom-${frontDesign?.id || "none"}-${
+            backDesign?.id || "none"
+        }-${selectedShirtType}-${effectiveColor}-${selectedSize}-${selectedFabric}`;
 
         const productForCart = {
             id: cartItemId,
@@ -149,23 +157,9 @@ export function CustomizerSection({ designFromDetail }) {
                         onSelectFabric={setSelectedFabric}
                         selectedShirtType={selectedShirtType}
                         onSelectShirtType={setSelectedShirtType}
+                        enableBack={enableBack}
+                        onToggleBack={handleToggleBack}
                     />
-
-                    <div style={{ margin: "10px 0" }}>
-                        <label style={{ cursor: "pointer" }}>
-                            <input
-                                type="checkbox"
-                                checked={enableBack}
-                                onChange={() => {
-                                    const newValue = !enableBack;
-                                    setEnableBack(newValue);
-                                    setSelectedSide(newValue ? "back" : "front");
-                                }}
-                                style={{ marginRight: "6px" }}
-                            />
-                            Modificar espalda
-                        </label>
-                    </div>
 
                     <DesignGrid
                         categoryData={designsData.find(
@@ -209,7 +203,7 @@ export function CustomizerSection({ designFromDetail }) {
                     </div>
 
                     <button className="buy-button" onClick={handleBuy}>
-                        Comprar
+                        Agregar al carrito
                     </button>
                 </div>
             </div>

@@ -163,3 +163,70 @@ BOTÓN
     color: var(--bg-page);
     transform: scale(1.03);
 }
+
+/* ====================================================
+CHECKBOX — "Imprimir también en la espalda"
+(Mejora visual sin tocar JSX)
+==================================================== */
+
+.option-label.option-toggle {
+    /* lo convertimos en un bloque tipo tarjeta/pill */
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+    padding: 12px 14px;
+
+    border: 1px solid var(--border-default);
+    border-radius: 14px;
+
+    background: var(--bg-hover);
+    color: var(--text-primary);
+
+    /* que no se vea pegado al select */
+    margin-top: 6px;
+
+    /* el texto que no quede tan grande ni tan “gritón” */
+    font-size: var(--font-base);
+    line-height: 1.2;
+    text-align: left;
+    margin-top: var(--space-7);
+}
+
+@media (max-width: 1300px) {
+    .option-label.option-toggle {
+        text-align: center;
+    }
+}
+
+/* El input trae estilos inline marginRight: 8px en JSX :contentReference[oaicite:1]{index=1}
+   No lo podemos quitar desde CSS, pero sí mejorar lo demás. */
+.option-label.option-toggle input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+
+    /* esto lo hace verse moderno en la mayoría de browsers */
+    accent-color: var(--text-primary);
+
+    /* evita que se “baje” raro respecto al texto */
+    flex: 0 0 auto;
+}
+
+.option-label.option-toggle:hover {
+    border-color: var(--text-accent);
+    background: var(--bg-surface);
+}
+
+.option-label.option-toggle input[type="checkbox"]:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px black;
+    border-radius: 6px;
+}
+
+/* Opcional: si quieres que se vea más “activado” cuando está marcado */
+.option-label.option-toggle:has(input[type="checkbox"]:checked) {
+    border-color: var(--text-accent);
+    box-shadow: 0 0 0 3px black;
+}

@@ -10,7 +10,11 @@ function useCartReducer() {
     const [state, dispatch] = useReducer(cartReducer, cartInitialState);
 
     const addToCart = (product, quantity = 1) => {
-        const breakdown = computePriceBreakdown(product);
+        const normalizedProduct = {
+            ...product,
+            type: product.shirtType ? "custom" : (product.type || "default"),
+        };
+        const breakdown = computePriceBreakdown(normalizedProduct);
         
         dispatch({
             type: "ADD_TO_CART",

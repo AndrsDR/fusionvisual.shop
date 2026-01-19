@@ -184,9 +184,13 @@ function CartItemActions({ item, onRemoveOrDecrement }) {
                 </span>
             </div>
 
-            <button className="cart-remove-btn" onClick={onRemoveOrDecrement}>
+            <button
+                className="cart-remove-btn"
+                onClick={() => onRemoveOrDecrement(item)}
+            >
                 Quitar
             </button>
+
         </div>
     );
 }
@@ -466,8 +470,10 @@ export function CartSidebar() {
         const qty = item.quantity || 1;
         if (qty > 1 && typeof decrementFromCart === "function") {
             decrementFromCart(item);
+            console.log("se quito" + item)
         } else {
             removeFromCart(item);
+            console.log("se quito" + item)
         }
     };
 
@@ -477,8 +483,8 @@ export function CartSidebar() {
         showCheckout &&
         submitted &&
         paymentStatus === "PENDING" &&
-        !!pendingPayload &&
-        !isSubmitting;
+        !!pendingPayload;
+
 
     // ✅ CLIENT ID: usa env de Vite (recomendado)
     const paypalClientId = import.meta.env.VITE_PAYPAL_CLIENT_ID || "";
@@ -514,9 +520,9 @@ export function CartSidebar() {
         onApprove: async (data, actions) => {
             try {
                 setIsPayPalProcessing(true);
-                setIsSubmitting(true);
 
                 const details = await actions.order.capture();
+
 
                 setPaypalOrderId(details?.id || data?.orderID || "");
 

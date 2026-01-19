@@ -1,6 +1,7 @@
 import "./Header.css";
 import logoBlanco from "../../assets/LOGO BLANCO (2).png";
 import { useAppActions } from "../../hooks/useAppActions";
+import { useCart } from "../../context/CartContext.jsx";
 
 function HeaderSection({ icon, text, action }) {
     return (
@@ -17,6 +18,7 @@ function HeaderSection({ icon, text, action }) {
 
 export function Header() {
     const { handleAction } = useAppActions();
+    const { cart } = useCart();
 
     return (
         <header className="site-header">
@@ -48,7 +50,10 @@ export function Header() {
                     aria-label="Abrir carrito"
                 >
                     <span className="material-symbols-outlined">shopping_cart</span>
-                    <span className="cart-count">#</span>
+                    {
+                        cart.length > 0 &&
+                        <span className="cart-count">{cart.length}</span>
+                    }
                 </button>
             </nav>
         </header>

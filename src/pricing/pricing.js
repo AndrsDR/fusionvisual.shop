@@ -1,25 +1,25 @@
 // src/pricing/pricing.js
 
 export const SHIRT_BASE_PRICE = {
-    basic: 179,
-    polo: 249,
-    vneck: 199,
+    basic: .179,
+    polo: .249,
+    vneck: .199,
 };
 
 export const FABRIC_DELTA = {
-    cotton: 20,
-    premium: 40,
-    dryfit: 60,
+    cotton: .19,
+    premium: .39,
+    dryfit: .59,
 };
 
 export const SIDES_DELTA = {
     front: 0,
     back: 0,
-    both: 60,
+    both: .59,
 };
 
-// ✅ Un solo precio para cualquier diseño
-export const DESIGN_FLAT_PRICE = .1;
+// costo del diseño/impresión
+export const DESIGN_FLAT_PRICE = .49;
 
 function safeNumber(n, fallback = 0) {
     const x = Number(n);
@@ -38,7 +38,8 @@ export function computeUnitPrice(item) {
 
     // Si "default" es solo diseño (sin playera), cobra solo el diseño
     // Tu buildItemsForSheet mapea type "default" distinto. :contentReference[oaicite:1]{index=1}
-    if (item.type === "default") {
+    const isDesignOnly = item.type === "default" && !item.shirtType;
+    if (isDesignOnly) {
         return DESIGN_FLAT_PRICE;
     }
 
@@ -58,10 +59,11 @@ export function computePriceBreakdown(item) {
         designFlat: DESIGN_FLAT_PRICE,
     };
 
-    breakdown.unitPrice =
-        (item.type === "default")
-            ? breakdown.designFlat
-            : breakdown.base + breakdown.fabricDelta + breakdown.sidesDelta + breakdown.designFlat;
+    const isDesignOnly = item.type === "default" && !item.shirtType;
+
+    breakdown.unitPrice = isDesignOnly
+        ? breakdown.designFlat
+        : breakdown.base + breakdown.fabricDelta + breakdown.sidesDelta + breakdown.designFlat;
 
     return breakdown;
 }

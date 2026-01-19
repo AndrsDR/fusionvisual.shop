@@ -1,266 +1,326 @@
 /* ===========================================================
 CUSTOMIZER SECTION — ESTILOS PRINCIPALES
 Mantiene coherencia con la paleta definida en index.css
-   =========================================================== */
+=========================================================== */
 
 .customizer-section {
-	display: flex;
-	flex-direction: column;
-	width: 100%;
-	background: var(--bg-page);
-	color: var(--text-primary);
-	padding-bottom: 0;
-	padding-top: var(--header-height);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    padding-bottom: 0;
+    padding-top: var(--header-height);
 }
 
 /* --------- Layout principal --------- */
 .customizer-layout {
-	display: grid;
-	grid-template-columns: 30% 1fr;
-	height: calc(100vh - 140px);
-	/* Ajustar según alto del Header + categoría bar */
-	overflow: hidden;
+    display: grid;
+    grid-template-columns: 30% 1fr;
+    height: calc(100vh - 140px); /* Ajustar según alto del Header + categoría bar */
+    overflow: hidden;
 }
 
 /* Panel izquierdo */
 .customizer-left {
-	border-right: 1px solid var(--border-default);
-	display: flex;
-	flex-direction: column;
-	overflow-y: auto;
-	background: var(--bg-surface);
+    border-right: 1px solid var(--border-default);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: var(--bg-surface);
 }
 
 /* Panel derecho */
 .customizer-right {
-	display: flex;
-	flex-direction: column;
-	align-items: center; /* ← Ahora sí centrado */
-	justify-content: center;
-	padding: var(--space-6) var(--space-8);
-	background: var(--bg-page);
-	position: relative;
-	gap: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-6) var(--space-8);
+    background: var(--bg-page);
+    position: relative;
+    gap: var(--space-4);
 }
 
 .buy-button {
-	margin-top: var(--space-3);
-	margin: var(--space-3) auto 0;
-	padding: 0.6rem 2rem;
-	border-radius: 40px;
-	border: 1px solid var(--text-secondary);
-	background: var(--bg-surface);
-	font-size: var(--font-md);
-	cursor: pointer;
-	transition: background .2s, transform .15s;
-	width: 100%;
-	max-width: 500px;
+    margin-top: var(--space-3);
+    margin: var(--space-3) auto 0;
+    padding: 0.6rem 2rem;
+    border-radius: 40px;
+    border: 1px solid var(--text-secondary);
+    background: var(--bg-surface);
+    font-size: var(--font-md);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+    width: 100%;
+    max-width: 500px;
 }
 
 .buy-button:hover {
-	transform: translateY(-2px);
+    transform: translateY(-2px);
 }
 
 /* ===========================================================
-CONTROLS — Opciones (color, tela, talla)
-   =========================================================== */
+CONTROLS — Opciones (color, tela, talla, checkbox espalda)
+=========================================================== */
 
 .customizer-controls {
-	padding: var(--space-4);
-	border-bottom: 1px solid var(--border-default);
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-4);
-}
+    padding: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
 
-.customizer-controls {
-	background: rgba(255,255,255,0.02);
-	border: 1px solid var(--border-default);
-	border-radius: 10px;
-	margin: var(--space-3);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-default);
+    border-radius: 10px;
+
+    margin: var(--space-3);
 }
 
 .controls-title {
-	font-size: var(--font-lg);
-	margin-bottom: var(--space-2);
+    font-size: var(--font-lg);
+    margin-bottom: var(--space-2);
 }
 
-.control-group label {
-	font-size: var(--font-sm);
-	color: var(--text-secondary);
+/* Tu JSX usa: <label className="control-group">... */
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
 }
 
+/* Color options */
 .color-options {
-	display: flex;
-	gap: var(--space-2);
-	margin-top: var(--space-2);
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
 }
 
 .color-box {
-	width: 26px;
-	height: 26px;
-	border-radius: 4px;
-	cursor: pointer;
-	border: 1px solid var(--border-default);
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid var(--border-default);
+    transition: transform 0.12s ease, box-shadow 0.18s ease;
 }
 
+.color-box:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.12);
+}
+
+/* Selects más premium + flechita sin romper layout */
 .control-select {
-	margin-top: var(--space-1);
-	padding: var(--space-2);
-	background: var(--bg-surface);
-	border: 1px solid var(--border-default);
-	color: var(--text-primary);
-	border-radius: 6px;
-	width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    padding: 10px 38px 10px 12px; /* espacio para la flecha */
+    border-radius: 10px;
+    border: 1px solid var(--border-default);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+
+    outline: none;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%),
+        linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+    background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 12px) 50%;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+}
+
+.control-select:hover {
+    border-color: var(--text-secondary);
+}
+
+.control-select:focus {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+/* Checkbox: "Modificar espalda" dentro del panel gris */
+.side-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-default);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.toggle-input {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--text-primary);
+    cursor: pointer;
+}
+
+.toggle-label {
+    cursor: pointer;
+    font-size: var(--font-sm);
+    color: var(--text-primary);
+    user-select: none;
 }
 
 /* ===========================================================
 DESIGN GRID — galería de diseños seleccionados
-   =========================================================== */
+=========================================================== */
 
 .design-grid {
-	padding: var(--space-3);
-	display: grid;
-	gap: var(--space-3);
-	grid-template-columns: repeat(4, 1fr);
-	overflow-y: auto;
+    padding: var(--space-3);
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: repeat(4, 1fr);
+
+    overflow-y: auto;
+
+    /* Esto hace que el grid “rellene” el panel izquierdo debajo del controls */
+    flex: 1;
+    min-height: 0;
 }
 
 .design-item {
-	width: 100%;
-	background: var(--bg-surface);
-	border: 1px solid var(--border-default);
-	border-radius: 6px;
-	cursor: pointer;
-	padding: var(--space-2);
-	transition: transform .15s ease;
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-default);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: var(--space-2);
+    transition: transform 0.15s ease, box-shadow 0.18s ease;
 }
 
 .design-item:hover {
-	transform: scale(1.06);
-	box-shadow: 0 0 12px rgba(255,255,255,0.12);
+    transform: scale(1.06);
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
 }
 
-/* (tenías duplicado, dejo solo uno) */
 .no-designs-msg {
-	padding: var(--space-4);
-	font-size: var(--font-sm);
-	color: var(--text-secondary);
+    padding: var(--space-4);
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
 }
 
 /* ===========================================================
 SHIRT PREVIEW — Vista de la camiseta con diseño overlay
-   =========================================================== */
+=========================================================== */
 
 .shirt-preview {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	width: fit-content;
-	margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    margin: 0 auto;
 }
 
 .shirt-base {
-	width: 380px;
-	height: 380px;
-	border: 2px solid var(--text-secondary);
-	position: relative;
-	background: var(--bg-surface);
-	border-radius: 14px;
-	box-shadow: 0 0 25px rgba(0,0,0,0.45);
-	overflow: hidden;
+    width: 380px;
+    height: 380px;
+    border: 2px solid var(--text-secondary);
+    position: relative;
+    background: var(--bg-surface);
+    border-radius: 14px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
 }
 
 .shirt-design {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -45%);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -45%);
 }
 
 /* básica: tu config original que te funcionaba bien */
 .shirt-design-basic {
-	width: 35%;
-	transform: translate(-50%, -45%);
+    width: 35%;
+    transform: translate(-50%, -45%);
 }
 
 /* polo y cuello V: más pequeñas y un pelín más abajo */
 .shirt-design-polo,
 .shirt-design-v-neck {
-	width: 30%;
-	transform: translate(-50%, -40%);
+    width: 30%;
+    transform: translate(-50%, -40%);
 }
 
 .shirt-base-img {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
 }
 
 /* ===========================================================
 SCROLLBARS PREMIUM OSCUROS
-   =========================================================== */
+=========================================================== */
 
-/* Estilo WebKit (Chrome, Edge, Opera, Brave, Safari) */
 .customizer-left::-webkit-scrollbar,
 .design-grid::-webkit-scrollbar,
 .category-grid::-webkit-scrollbar {
-	width: 8px;
-	height: 8px;
+    width: 8px;
+    height: 8px;
 }
 
 .customizer-left::-webkit-scrollbar-track,
 .design-grid::-webkit-scrollbar-track,
 .category-grid::-webkit-scrollbar-track {
-	background: var(--bg-surface);
+    background: var(--bg-surface);
 }
 
 .customizer-left::-webkit-scrollbar-thumb,
 .design-grid::-webkit-scrollbar-thumb,
 .category-grid::-webkit-scrollbar-thumb {
-	background: var(--bg-hover);
-	border-radius: 8px;
+    background: var(--bg-hover);
+    border-radius: 8px;
 }
 
 .customizer-left::-webkit-scrollbar-thumb:hover,
 .design-grid::-webkit-scrollbar-thumb:hover,
 .category-grid::-webkit-scrollbar-thumb:hover {
-	background: var(--text-secondary);
+    background: var(--text-secondary);
 }
 
-/* Firefox scrollbars */
 .customizer-left,
 .design-grid,
 .category-grid {
-	scrollbar-width: thin;
-	scrollbar-color: var(--bg-hover) var(--bg-surface);
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-hover) var(--bg-surface);
 }
 
 /* ===========================================================
 PREVIEW (dual)
-   =========================================================== */
+=========================================================== */
 
 .preview-dual {
-	display: flex;
-	gap: 30px;
-	align-items: center;
+    display: flex;
+    gap: 30px;
+    align-items: center;
 }
 
 .preview-box {
-	border: 2px solid transparent;
-	border-radius: 18px;
-	padding: 8px;
-	transition: .2s;
+    border: 2px solid transparent;
+    border-radius: 18px;
+    padding: 8px;
+    transition: 0.2s;
+    cursor: pointer;
 }
 
 .preview-box:hover {
-	border-color: #666;
+    border-color: #666;
 }
 
 .active-preview {
-	border-color: var(--text-secondary);
-	box-shadow: 0px 0px 12px var(--text-primary);
+    border-color: var(--text-secondary);
+    box-shadow: 0px 0px 12px var(--text-primary);
 }
 
 /* ===========================================================
@@ -268,56 +328,56 @@ CATEGORY DROPDOWN — barra plegable (overlay)
 =========================================================== */
 
 .category-dropdown {
-	position: relative;
-	z-index: 50;
-	background: var(--bg-header);
-	border-bottom: 1px solid var(--border-default);
+    position: relative;
+    z-index: 50;
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border-default);
 }
 
 .category-trigger {
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-	padding: var(--space-3) var(--space-4);
-	background: transparent;
-	border: 0;
-	color: var(--text-primary);
-	font: inherit;
+    padding: var(--space-3) var(--space-4);
+    background: transparent;
+    border: 0;
+    color: var(--text-primary);
+    font: inherit;
 
-	cursor: pointer;
-	transition: color 0.18s ease;
+    cursor: pointer;
+    transition: color 0.18s ease;
 }
 
 .category-trigger:hover {
-	color: var(--bg-page);
-	background-color: var(--text-primary);
-	border-radius: 7px;
+    color: var(--bg-page);
+    background-color: var(--text-primary);
+    border-radius: 7px;
 }
 
 .category-trigger:hover .category-trigger-icon {
-	color: var(--bg-page);
+    color: var(--bg-page);
 }
+
 .category-trigger-label {
-	font-size: var(--font-sm);
-	font-weight: 600;
-	letter-spacing: 0.2px;
+    font-size: var(--font-sm);
+    font-weight: 600;
+    letter-spacing: 0.2px;
 }
 
 .category-trigger-icon {
-	font-size: 24px;
-	transition: transform 0.18s ease, color 0.18s ease;
+    font-size: 24px;
+    transition: transform 0.18s ease, color 0.18s ease;
 }
 
 .category-trigger-icon.is-open {
-	transform: rotate(180deg);
+    transform: rotate(180deg);
 }
 
-/* ===== FIX: el trigger NO debe cambiar tamaño en hover ===== */
-
+/* FIX: el trigger NO debe cambiar tamaño en hover */
 .category-trigger {
-    line-height: 1;          /* evita saltos raros */
+    line-height: 1;
     transform: none !important;
 }
 
@@ -325,11 +385,10 @@ CATEGORY DROPDOWN — barra plegable (overlay)
     transform: none !important;
 }
 
-/* si en tu proyecto alguien subraya con border-bottom, lo anulamos */
 .category-trigger,
 .category-trigger:hover {
     border-bottom: 0 !important;
-    padding-bottom: var(--space-3) !important; /* mantiene el mismo padding */
+    padding-bottom: var(--space-3) !important;
 }
 
 /* subrayado sin alterar layout */
@@ -353,102 +412,100 @@ CATEGORY DROPDOWN — barra plegable (overlay)
 
 .category-trigger:hover .category-trigger-label::after {
     transform: scaleX(1);
-	background: var(--bg-page);
+    background: var(--bg-page);
 }
 
-
 .category-panel {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 100%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
 
-	background: var(--bg-header);
-	border-bottom: 1px solid var(--border-default);
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border-default);
 
-	opacity: 0;
-	transform: translateY(-6px);
-	pointer-events: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
 
-	transition: opacity 0.18s ease, transform 0.18s ease;
-	z-index: 999;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 999;
 
-	/* overlay feel */
-	box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
 }
 
 .category-panel.open {
-	opacity: 1;
-	transform: translateY(0);
-	pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
-/* TEXTO + WRAP (no botones/pills) */
+/* TEXTO + WRAP */
 .category-grid {
-	padding: var(--space-3) var(--space-4);
+    padding: var(--space-3) var(--space-4);
 
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 
-	column-gap: 22px;
-	row-gap: 14px;
+    column-gap: 22px;
+    row-gap: 14px;
 
-	max-height: calc((1.2em * 3) + (14px * 2) + (var(--space-3) * 2));
-	overflow-y: auto;
+    max-height: calc((1.2em * 3) + (14px * 2) + (var(--space-3) * 2));
+    overflow-y: auto;
 }
 
 .category-cell {
-	padding: 0;
-	border: 0;
-	border-radius: 0;
-	background: transparent;
-	box-shadow: none;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
 
-	width: auto;
-	flex: 0 0 auto;
+    width: auto;
+    flex: 0 0 auto;
 
-	color: var(--text-primary);
-	font: inherit;
-	font-size: var(--font-sm);
-	font-weight: 500;
+    color: var(--text-primary);
+    font: inherit;
+    font-size: var(--font-sm);
+    font-weight: 500;
 
-	white-space: normal;
-	overflow: visible;
-	text-overflow: unset;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
 
-	cursor: pointer;
-	position: relative;
-	transition: color 0.18s ease, border-radius 0.18s ease, background-color 0.23s ease;
-	padding: 4px 8px;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.18s ease, border-radius 0.18s ease, background-color 0.23s ease;
+    padding: 4px 8px;
 }
 
 .category-cell:hover {
-	color: var(--bg-page);
-	border-radius: 5px;
+    color: var(--bg-page);
+    border-radius: 5px;
 }
 
 .category-cell::after {
-	content: "";
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: -6px;
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
 
-	height: 2px;
-	background: var(--text-accent);
+    height: 2px;
+    background: var(--text-accent);
 
-	transform: scaleX(0);
-	transform-origin: left;
-	transition: transform 0.18s ease;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.18s ease;
 }
 
 .category-cell:hover::after,
 .category-cell.active::after {
-	transform: scaleX(1);
+    transform: scaleX(1);
 }
 
 .category-cell.active {
-	text-shadow: 0px 0px 2px var(--text-accent);
-	color: var(--text-primary);
+    text-shadow: 0px 0px 2px var(--text-accent);
+    color: var(--text-primary);
 }
