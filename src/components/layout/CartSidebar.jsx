@@ -252,7 +252,7 @@ export function CartSidebar() {
                         setActiveCheckoutSessionId(draft.sessionId);
 
                         // Intentar abrir en otra pestaña (sin alert/confirm)
-                        window.open("/checkout", "_blank", "noopener,noreferrer");
+                        window.open("/#/checkout", "_blank", "noopener,noreferrer");
                     }}
                 />
             </aside>
