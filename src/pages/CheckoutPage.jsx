@@ -7,9 +7,6 @@ import { publishCheckoutEvent } from "../checkout/checkoutChannel.js";
 
 import "./CheckoutPage.css";
 
-const SHEETS_WEBHOOK_URL =
-    "https://script.google.com/macros/s/AKfycby0Xaf6r--8orb0ql_lXhsgTHD9A6xhGzqKYvAq9-a4VkHFPBwpqwKloXTZAFvKkMylhg/exec";
-
 const COPOMEX_TOKEN = import.meta.env.VITE_COPOMEX_TOKEN || "";
 
 function money(n) {
@@ -145,61 +142,63 @@ export function CheckoutPage() {
         clientId: paypalClientId,
         currency: "MXN",
 
-        createOrder: (data, actions) => {
-            const value = String(Number(total || 0).toFixed(2));
-            return actions.order.create({
-                purchase_units: [
-                    {
-                        amount: {
-                            currency_code: "MXN",
-                            value
-                        }
-                    }
-                ]
+        createOrder: async () => {
+            if (!pendingPayload) throw new Error("No hay pedido pendiente.");
+            const res = await fetch("/api/paypal/create-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    orderId: pendingPayload.orderId,
+                    cartSnapshot: draft.cartSnapshot
+                })
             });
+        
+            const json = await res.json().catch(() => null);
+            if (!res.ok || !json?.orderID) {
+                throw new Error(json?.error || "No se pudo crear la orden de PayPal.");
+            }
+        
+            return json.orderID;
         },
 
-        onApprove: async (data, actions) => {
+
+        onApprove: async (data) => {
             try {
                 setIsPayPalProcessing(true);
-
-                const details = await actions.order.capture();
-                const paypalOrderId = details?.id || data?.orderID || "";
-                const payerEmail = details?.payer?.email_address || "";
-
+            
                 if (!pendingPayload) throw new Error("No hay pedido pendiente para registrar.");
-
-                const paidPayload = {
-                    ...pendingPayload,
-                    status: "PAID",
-                    paypal: { id: paypalOrderId, payerEmail }
-                };
-
-                const res = await fetch(SHEETS_WEBHOOK_URL, {
+                const orderID = data?.orderID || "";
+                if (!orderID) throw new Error("No se recibió orderID de PayPal.");
+            
+                const res = await fetch("/api/paypal/capture-order", {
                     method: "POST",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(paidPayload)
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        orderID,
+                        pendingPayload,
+                        cartSnapshot: draft.cartSnapshot
+                    })
                 });
-
+            
                 const json = await res.json().catch(() => null);
                 if (!res.ok || !json?.ok) {
-                    throw new Error(json?.error || "No se pudo registrar el pedido en Sheets.");
+                    throw new Error(json?.error || "No se pudo capturar/registrar el pedido.");
                 }
-
+            
                 setPaymentStatus("PAID");
                 updateDraft({
                     paymentStatus: "PAID",
                     status: "COMPLETED",
-                    paypal: { orderId: paypalOrderId, payerEmail }
+                    paypal: { orderId: orderID }
                 });
-
+            
                 publishCheckoutEvent({
                     type: "CHECKOUT_COMPLETED",
                     sessionId,
                     payload: { orderId: pendingPayload.orderId }
                 });
             } catch (err) {
-                console.error("❌ PayPal approve -> Sheets error:", err);
+                console.error("❌ PayPal backend capture error:", err);
                 alert(err?.message || "Error registrando el pedido pagado.");
                 updateDraft({ status: "ERROR" });
             } finally {
@@ -207,6 +206,7 @@ export function CheckoutPage() {
                 setIsPayPalProcessing(false);
             }
         },
+
 
         onCancel: () => {
             alert("Pago cancelado. No se registró ningún pedido.");
