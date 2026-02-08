@@ -3,8 +3,24 @@
 import { buildItemsForSheet } from "../../src/checkout/checkoutDraft.js";
 import { computeUnitPrice } from "../../src/pricing/pricing.js";
 
-const PAYPAL_BASE = "https://api-m.sandbox.paypal.com";
-const EXPECTED_CURRENCY = "MXN";
+function getPayPalBase() {
+    const env = String(process.env.PAYPAL_ENV || "sandbox").toLowerCase();
+    return env === "live"
+        ? "https://api-m.paypal.com"
+        : "https://api-m.sandbox.paypal.com";
+}
+
+function enforceOrigin(req, res) {
+    const allowed = process.env.ALLOWED_ORIGIN;
+    if (!allowed) return true;
+
+    const origin = req.headers.origin || "";
+    if (origin !== allowed) {
+        res.status(403).json({ error: "Forbidden origin" });
+        return false;
+    }
+    return true;
+}
 
 function safeQty(q) {
     const n = Number(q);
@@ -25,12 +41,6 @@ function calcTotalFromCartSnapshot(cartSnapshot) {
     return Math.round(total * 100) / 100;
 }
 
-function isValidOrderId(orderId) {
-    if (typeof orderId !== "string") return false;
-    if (orderId.length < 6 || orderId.length > 80) return false;
-    return /^[A-Za-z0-9_-]+$/.test(orderId);
-}
-
 async function getPayPalAccessToken() {
     const clientId = process.env.PAYPAL_CLIENT_ID;
     const secret = process.env.PAYPAL_CLIENT_SECRET;
@@ -40,6 +50,7 @@ async function getPayPalAccessToken() {
     }
 
     const auth = Buffer.from(`${clientId}:${secret}`).toString("base64");
+    const PAYPAL_BASE = getPayPalBase();
 
     const r = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
         method: "POST",
@@ -68,18 +79,6 @@ function extractCapturedAmount(captureJson) {
 function extractCustomId(captureJson) {
     const pu = captureJson?.purchase_units?.[0];
     return pu?.custom_id || null;
-}
-
-function extractCaptureStatus(captureJson) {
-    const pu = captureJson?.purchase_units?.[0];
-    const cap = pu?.payments?.captures?.[0];
-    return cap?.status || "";
-}
-
-function extractCaptureCurrency(captureJson) {
-    const pu = captureJson?.purchase_units?.[0];
-    const cap = pu?.payments?.captures?.[0];
-    return cap?.amount?.currency_code || "";
 }
 
 function sanitizeString(s, max = 200) {
@@ -115,6 +114,8 @@ export default async function handler(req, res) {
             return res.status(405).json({ error: "Method not allowed" });
         }
 
+        if (!enforceOrigin(req, res)) return;
+
         const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
 
         const orderID = String(body?.orderID || "").trim();
@@ -127,23 +128,18 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: "Invalid cartSnapshot" });
         }
 
-        // Whitelist del payload (evita inyección de campos a Sheets)
-        const base = pickPendingPayload(pendingPayload);
-
-        if (!isValidOrderId(base.orderId)) {
-            return res.status(400).json({ error: "Invalid pendingPayload.orderId" });
+        if (!pendingPayload?.orderId) {
+            return res.status(400).json({ error: "Missing pendingPayload.orderId" });
         }
 
-        // Total “oficial” server-side (NO confiar en unitPrice del cliente)
         const expectedTotal = calcTotalFromCartSnapshot(cartSnapshot);
-
         if (!(expectedTotal > 0)) {
             return res.status(400).json({ error: "Expected total must be > 0" });
         }
 
         const accessToken = await getPayPalAccessToken();
+        const PAYPAL_BASE = getPayPalBase();
 
-        // Captura
         const r = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${encodeURIComponent(orderID)}/capture`, {
             method: "POST",
             headers: {
@@ -161,14 +157,22 @@ export default async function handler(req, res) {
             });
         }
 
-        // Amarre fuerte: PayPal custom_id DEBE existir y debe coincidir con tu orderId interno
-        const paypalCustomId = extractCustomId(captureJson);
-
-        if (!paypalCustomId) {
-            return res.status(400).json({ error: "Missing PayPal custom_id (order binding failed)" });
+        // PayPal devuelve status (COMPLETED normalmente)
+        const status = String(captureJson?.status || "");
+        if (status && status !== "COMPLETED") {
+            return res.status(400).json({
+                error: "PayPal capture not completed",
+                status
+            });
         }
 
-        if (paypalCustomId !== base.orderId) {
+        const base = pickPendingPayload(pendingPayload);
+        if (!base.orderId) {
+            return res.status(400).json({ error: "Invalid pendingPayload.orderId" });
+        }
+
+        const paypalCustomId = extractCustomId(captureJson);
+        if (paypalCustomId && paypalCustomId !== base.orderId) {
             return res.status(400).json({
                 error: "PayPal order does not match pendingPayload.orderId",
                 expectedOrderId: base.orderId,
@@ -176,20 +180,7 @@ export default async function handler(req, res) {
             });
         }
 
-        // Validar estado y moneda del capture (hardening)
-        const capStatus = extractCaptureStatus(captureJson);
-        if (capStatus && capStatus !== "COMPLETED") {
-            return res.status(400).json({ error: "Capture not completed", status: capStatus });
-        }
-
-        const capCurrency = extractCaptureCurrency(captureJson);
-        if (capCurrency && capCurrency !== EXPECTED_CURRENCY) {
-            return res.status(400).json({ error: "Currency mismatch", currency: capCurrency });
-        }
-
         const captured = extractCapturedAmount(captureJson);
-
-        // Verificación del monto (tolerancia mínima por flotantes)
         if (captured == null || Math.abs(captured - expectedTotal) > 0.009) {
             return res.status(400).json({
                 error: "Captured amount mismatch",
@@ -199,8 +190,6 @@ export default async function handler(req, res) {
         }
 
         const payerEmail = captureJson?.payer?.email_address || "";
-
-        // Re-armar items desde server (no confiar en los items del cliente)
         const serverItems = buildItemsForSheet(cartSnapshot);
 
         const paidPayload = {
@@ -219,18 +208,9 @@ export default async function handler(req, res) {
             return res.status(500).json({ error: "Missing SHEETS_WEBHOOK_URL on server" });
         }
 
-        const headers = { "Content-Type": "text/plain;charset=utf-8" };
-
-        // Hardening opcional: protege el webhook con un secret header (si configuras la env var).
-        const sheetsSecret = process.env.SHEETS_WEBHOOK_SECRET;
-        if (sheetsSecret) {
-            headers["X-FV-Secret"] = sheetsSecret;
-        }
-
-        // Registrar en Sheets desde backend
         const s = await fetch(sheetsUrl, {
             method: "POST",
-            headers,
+            headers: { "Content-Type": "application/json;charset=utf-8" },
             body: JSON.stringify(paidPayload)
         });
 

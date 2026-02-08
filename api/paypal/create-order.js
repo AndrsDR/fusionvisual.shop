@@ -2,7 +2,24 @@
 
 import { computeUnitPrice } from "../../src/pricing/pricing.js";
 
-const PAYPAL_BASE = "https://api-m.sandbox.paypal.com";
+function getPayPalBase() {
+    const env = String(process.env.PAYPAL_ENV || "sandbox").toLowerCase();
+    return env === "live"
+        ? "https://api-m.paypal.com"
+        : "https://api-m.sandbox.paypal.com";
+}
+
+function enforceOrigin(req, res) {
+    const allowed = process.env.ALLOWED_ORIGIN;
+    if (!allowed) return true; // si no configuras ALLOWED_ORIGIN, no bloqueamos
+
+    const origin = req.headers.origin || "";
+    if (origin !== allowed) {
+        res.status(403).json({ error: "Forbidden origin" });
+        return false;
+    }
+    return true;
+}
 
 function safeQty(q) {
     const n = Number(q);
@@ -20,15 +37,7 @@ function calcTotalFromCartSnapshot(cartSnapshot) {
         total += unit * qty;
     }
 
-    // redondeo a 2 decimales
     return Math.round(total * 100) / 100;
-}
-
-function isValidOrderId(orderId) {
-    // Permite UUID, folios, etc. (alfa-num + guion + underscore)
-    if (typeof orderId !== "string") return false;
-    if (orderId.length < 6 || orderId.length > 80) return false;
-    return /^[A-Za-z0-9_-]+$/.test(orderId);
 }
 
 async function getPayPalAccessToken() {
@@ -40,6 +49,7 @@ async function getPayPalAccessToken() {
     }
 
     const auth = Buffer.from(`${clientId}:${secret}`).toString("base64");
+    const PAYPAL_BASE = getPayPalBase();
 
     const r = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
         method: "POST",
@@ -64,17 +74,19 @@ export default async function handler(req, res) {
             return res.status(405).json({ error: "Method not allowed" });
         }
 
+        if (!enforceOrigin(req, res)) return;
+
         const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+
         const cartSnapshot = body?.cartSnapshot;
         const orderId = String(body?.orderId || "").trim();
 
-        if (!Array.isArray(cartSnapshot) || cartSnapshot.length === 0) {
-            return res.status(400).json({ error: "Invalid cartSnapshot" });
+        if (!orderId) {
+            return res.status(400).json({ error: "Missing orderId" });
         }
 
-        // Arquitectura esperada: el cliente manda un folio interno y el backend lo amarra con custom_id.
-        if (!isValidOrderId(orderId)) {
-            return res.status(400).json({ error: "Invalid or missing orderId" });
+        if (!Array.isArray(cartSnapshot) || cartSnapshot.length === 0) {
+            return res.status(400).json({ error: "Invalid cartSnapshot" });
         }
 
         const total = calcTotalFromCartSnapshot(cartSnapshot);
@@ -83,7 +95,7 @@ export default async function handler(req, res) {
         }
 
         const accessToken = await getPayPalAccessToken();
-
+        const PAYPAL_BASE = getPayPalBase();
         const value = total.toFixed(2);
 
         const payload = {
@@ -94,7 +106,6 @@ export default async function handler(req, res) {
                         currency_code: "MXN",
                         value
                     },
-                    // Amarre fuerte: SIEMPRE presente
                     custom_id: orderId
                 }
             ]
