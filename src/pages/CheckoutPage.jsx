@@ -72,7 +72,7 @@ function buildAddressForSheets(a) {
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000";
 
 async function postJson(path, body) {
-    const url = new URL(path, API_BASE);
+    const url = API_BASE ? new URL(path, API_BASE).toString() : path;
 
     const res = await fetch(url, {
         method: "POST",
