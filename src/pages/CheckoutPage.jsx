@@ -69,7 +69,9 @@ function buildAddressForSheets(a) {
         .join(" — ");
 }
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
+const API_BASE = import.meta.env.VITE_API_BASE_URL
+    || (import.meta.env.DEV ? "http://127.0.0.1:3000" : "");
+
 
 export async function postJson(path, body) {
     const url = API_BASE ? new URL(path, API_BASE).toString() : path;
