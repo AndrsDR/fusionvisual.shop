@@ -3,7 +3,6 @@
   "framework": null,
   "functions": {
     "api/**/*.js": {
-      "runtime": "vercel/node@20.x",
       "maxDuration": 10
     }
   },
