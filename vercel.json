@@ -1,6 +1,0 @@
-{
-    "devCommand": "pnpm run dev -- --port 3000",
-    "buildCommand": "pnpm run build",
-    "installCommand": "pnpm install",
-    "framework": "vite"
-}

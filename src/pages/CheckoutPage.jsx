@@ -7,6 +7,7 @@ import { publishCheckoutEvent } from "../checkout/checkoutChannel.js";
 
 import "./CheckoutPage.css";
 
+const SHEETS_WEBHOOK_URL = import.meta.env.VITE_SHEETS_WEBHOOK_URL || "";
 const COPOMEX_TOKEN = import.meta.env.VITE_COPOMEX_TOKEN || "";
 
 function money(n) {
@@ -22,7 +23,6 @@ function buildFormattedAddress(a) {
     const streetLine = [
         a.street?.trim(),
         a.noNumber ? "S/N" : a.streetNumber?.trim(),
-        // ✅ Interior opcional + soporte "sin interior"
         a.noInterior ? "" : a.interiorNumber?.trim() ? `Int ${a.interiorNumber.trim()}` : ""
     ]
         .filter(Boolean)
@@ -43,7 +43,6 @@ function buildFormattedAddress(a) {
     return [streetLine, placeLine, refs].filter(Boolean).join(" — ");
 }
 
-// ✅ Formato “bonito” SOLO para Sheets
 function buildAddressForSheets(a) {
     const country = "México";
     const state = a.state?.trim() || "";
@@ -70,11 +69,32 @@ function buildAddressForSheets(a) {
         .join(" — ");
 }
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000";
+
+async function postJson(path, body) {
+    const url = new URL(path, API_BASE);
+
+    const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        credentials: "include",
+    });
+
+    const json = await res.json().catch(() => null);
+
+    if (!res.ok) {
+        throw new Error(`HTTP_${res.status}`);
+    }
+    return json;
+}
+
+
 export function CheckoutPage() {
     const { sessionId, draft, total, error, updateDraft, hasValidDraft } = useCheckoutDraft();
 
     const [contact, setContact] = useState("");
-    const [address, setAddress] = useState(createEmptyAddress()); // ✅ objeto
+    const [address, setAddress] = useState(createEmptyAddress());
 
     const [submitted, setSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -93,20 +113,14 @@ export function CheckoutPage() {
     const [cpError, setCpError] = useState("");
 
     const apiEnabled = Boolean(COPOMEX_TOKEN);
-
-    // Evita race conditions (respuestas viejas pisando CP nuevo)
     const cpReqIdRef = useRef(0);
-
-    // ✅ Evita re-hidratar y pisar inputs mientras escribes (contact “desaparece”)
     const hydratedRef = useRef(false);
 
-    // precargar form desde draft
     useEffect(() => {
         if (!draft || hydratedRef.current) return;
 
         setContact(draft.contact || "");
 
-        // ✅ Migración: si draft.address era string (viejo), lo guardamos en formattedAddress
         if (typeof draft.address === "string") {
             const base = {
                 ...createEmptyAddress(),
@@ -129,7 +143,6 @@ export function CheckoutPage() {
         hydratedRef.current = true;
     }, [draft]);
 
-    // Flags para wizard/escalonado
     const cp5 = useMemo(() => onlyDigits(postalCode).slice(0, 5), [postalCode]);
     const cpValid = useMemo(() => cp5.length === 5 && colonias.length > 0 && !cpError, [cp5, colonias.length, cpError]);
     const coloniaSelected = useMemo(() => cpValid && Boolean(address?.neighborhood), [cpValid, address?.neighborhood]);
@@ -142,63 +155,76 @@ export function CheckoutPage() {
         clientId: paypalClientId,
         currency: "MXN",
 
+        // ✅ Server-side create (secure)
         createOrder: async () => {
-            if (!pendingPayload) throw new Error("No hay pedido pendiente.");
-            const res = await fetch("/api/paypal/create-order", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    orderId: pendingPayload.orderId,
-                    cartSnapshot: draft.cartSnapshot
-                })
-            });
-        
-            const json = await res.json().catch(() => null);
-            if (!res.ok || !json?.orderID) {
-                throw new Error(json?.error || "No se pudo crear la orden de PayPal.");
+            if (!draft?.cartSnapshot || !Array.isArray(draft.cartSnapshot) || draft.cartSnapshot.length === 0) {
+                throw new Error("Carrito vacío.");
             }
-        
-            return json.orderID;
+            if (!pendingPayload?.orderId) {
+                throw new Error("No hay folio de pedido.");
+            }
+
+            const out = await postJson("/api/paypal/create-order", {
+                orderId: pendingPayload.orderId,
+                cartSnapshot: draft.cartSnapshot
+            });
+
+            if (!out?.paypalOrderId) {
+                throw new Error("No se recibió paypalOrderId del servidor.");
+            }
+
+            return out.paypalOrderId;
         },
 
-
+        // ✅ Server-side capture (secure)
         onApprove: async (data) => {
             try {
                 setIsPayPalProcessing(true);
-            
+
+                const paypalOrderId = data?.orderID || "";
+                if (!paypalOrderId) throw new Error("No se recibió orderID de PayPal.");
+
                 if (!pendingPayload) throw new Error("No hay pedido pendiente para registrar.");
-                const orderID = data?.orderID || "";
-                if (!orderID) throw new Error("No se recibió orderID de PayPal.");
-            
-                const res = await fetch("/api/paypal/capture-order", {
+                if (!SHEETS_WEBHOOK_URL) throw new Error("Falta configurar VITE_SHEETS_WEBHOOK_URL.");
+
+                const cap = await postJson("/api/paypal/capture-order", { paypalOrderId });
+
+                const payerEmail =
+                    cap?.capture?.payer?.email_address ||
+                    cap?.capture?.payer?.email ||
+                    "";
+
+                const paidPayload = {
+                    ...pendingPayload,
+                    status: "PAID",
+                    paypal: { id: paypalOrderId, payerEmail }
+                };
+
+                const res = await fetch(SHEETS_WEBHOOK_URL, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        orderID,
-                        pendingPayload,
-                        cartSnapshot: draft.cartSnapshot
-                    })
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(paidPayload)
                 });
-            
+
                 const json = await res.json().catch(() => null);
                 if (!res.ok || !json?.ok) {
-                    throw new Error(json?.error || "No se pudo capturar/registrar el pedido.");
+                    throw new Error(json?.error || "No se pudo registrar el pedido en Sheets.");
                 }
-            
+
                 setPaymentStatus("PAID");
                 updateDraft({
                     paymentStatus: "PAID",
                     status: "COMPLETED",
-                    paypal: { orderId: orderID }
+                    paypal: { orderId: paypalOrderId, payerEmail }
                 });
-            
+
                 publishCheckoutEvent({
                     type: "CHECKOUT_COMPLETED",
                     sessionId,
                     payload: { orderId: pendingPayload.orderId }
                 });
             } catch (err) {
-                console.error("❌ PayPal backend capture error:", err);
+                console.error("❌ PayPal approve/capture -> Sheets error:", err);
                 alert(err?.message || "Error registrando el pedido pagado.");
                 updateDraft({ status: "ERROR" });
             } finally {
@@ -206,7 +232,6 @@ export function CheckoutPage() {
                 setIsPayPalProcessing(false);
             }
         },
-
 
         onCancel: () => {
             alert("Pago cancelado. No se registró ningún pedido.");
@@ -235,14 +260,12 @@ export function CheckoutPage() {
         setCpError("");
 
         try {
-            // ✅ CLAVE: type=simplified para que response sea objeto con asentamiento[]
             const res = await fetch(
                 `https://api.copomex.com/query/info_cp/${cp5Local}?type=simplified&token=${encodeURIComponent(COPOMEX_TOKEN)}`
             );
 
             const data = await res.json().catch(() => null);
 
-            // Si ya hubo otra request después, ignoramos esta
             if (myReqId !== cpReqIdRef.current) return;
 
             const r = data?.response;
@@ -268,7 +291,7 @@ export function CheckoutPage() {
                     state: estado,
                     municipality: municipio,
                     city: ciudad || base.city || "",
-                    neighborhood: keepNeighborhood, // ✅ conservar si sigue siendo válida
+                    neighborhood: keepNeighborhood,
                     validation: { method: "cp", confirmed: Boolean(keepNeighborhood) }
                 };
 
@@ -276,7 +299,6 @@ export function CheckoutPage() {
                 return next;
             });
 
-            // Persistencia mínima en draft (no forcemos colonia a "")
             updateDraft({
                 address: {
                     country: "MX",
@@ -323,10 +345,8 @@ export function CheckoutPage() {
         }
     }
 
-    // Debounce: cuando hay 5 dígitos, consulta CP
     useEffect(() => {
         if (cp5.length !== 5) {
-            // Invalida requests anteriores
             cpReqIdRef.current++;
 
             setColonias([]);
@@ -369,11 +389,8 @@ export function CheckoutPage() {
         }
 
         const a = address || {};
-
-        // ✅ 1) NO confíes en a.formattedAddress: constrúyelo aquí (siempre)
         const formatted = buildFormattedAddress(a);
 
-        // ✅ Validación seria (CP-first escalonado)
         if (!a.postalCode || String(a.postalCode).length !== 5) {
             alert("Ingresa un código postal válido (5 dígitos).");
             return;
@@ -394,28 +411,24 @@ export function CheckoutPage() {
             alert("Indica el número exterior o marca “Sin número”.");
             return;
         }
-
-        // ✅ 2) Valida con el formatted recién generado
         if (!String(formatted || "").trim()) {
             alert("Por favor completa tu dirección de entrega.");
             return;
         }
 
         const folio = `FV-${Date.now()}`;
-
-        // ✅ 3) Guardar “bruto” + “bonito sheets”
         const addressForSheets = buildAddressForSheets(a);
 
         const addressObjForPayload = {
             ...a,
-            formattedAddress: formatted, // bruto
-            addressForSheets // opcional (para futuro)
+            formattedAddress: formatted,
+            addressForSheets
         };
 
         const payload = {
             orderId: folio,
             contact: contact.trim(),
-            address: addressForSheets, // ✅ SOLO lo que verá Sheets
+            address: addressForSheets,
             addressObj: addressObjForPayload,
             total: Number(total || 0),
             status: "PENDING_PAYMENT",
@@ -428,7 +441,6 @@ export function CheckoutPage() {
         setPaymentStatus("PENDING");
         setSubmitted(true);
 
-        // ✅ 4) Persiste también formattedAddress dentro del draft
         updateDraft({
             contact: contact.trim(),
             address: addressObjForPayload,
@@ -438,11 +450,9 @@ export function CheckoutPage() {
             status: "SUBMITTED"
         });
 
-        // (tu lógica actual)
         setIsSubmitting(false);
     };
 
-    // --- UI ---
     if (!hasValidDraft) {
         return (
             <div className="checkout-page">
@@ -489,7 +499,6 @@ export function CheckoutPage() {
                                     onChange={(e) => {
                                         const v = e.target.value;
                                         setContact(v);
-                                        // ✅ persiste mientras escribes para que no “desaparezca”
                                         updateDraft({ contact: v });
                                     }}
                                     placeholder="Ej. +52 998... o usuario@gmail.com"
@@ -497,9 +506,6 @@ export function CheckoutPage() {
                                 />
                             </div>
 
-                            {/* =========================
-                                Dirección MX (CP-first escalonado)
-                               ========================= */}
                             <div className="checkout-field">
                                 <label className="checkout-label" htmlFor="checkout-cp">
                                     Código Postal (México):
@@ -521,7 +527,6 @@ export function CheckoutPage() {
                                 ) : null}
 
                                 {cpLoading ? <p className="checkout-muted">Buscando colonias…</p> : null}
-
                                 {cpError ? <p className="checkout-error">{cpError}</p> : null}
 
                                 {!cpError && !cpLoading && cp5.length < 5 ? (
@@ -567,7 +572,6 @@ export function CheckoutPage() {
                                             }
                                         });
                                     }}
-                                    // ✅ Escalonado real
                                     disabled={isSubmitting || !cpValid}
                                 >
                                     <option value="">
@@ -604,7 +608,6 @@ export function CheckoutPage() {
                                             updateDraft({ address: { street: v } });
                                         }}
                                         placeholder="Ej. Av. Tulum"
-                                        // ✅ Escalonado real
                                         disabled={isSubmitting || !coloniaSelected}
                                     />
                                 </div>
@@ -684,7 +687,6 @@ export function CheckoutPage() {
                                         disabled={isSubmitting || !coloniaSelected || Boolean(address?.noInterior)}
                                     />
 
-                                    {/* ✅ Consistencia: checkbox para “sin interior” */}
                                     <label className="checkout-inline-check">
                                         <input
                                             type="checkbox"
@@ -742,7 +744,6 @@ export function CheckoutPage() {
                             <div className="checkout-field">
                                 <p className="checkout-muted">
                                     <strong>Dirección:</strong>{" "}
-                                    {/* ✅ Esto seguirá funcionando, pero ahora además se garantiza en submit */}
                                     {address?.formattedAddress ? address.formattedAddress : "—"}
                                 </p>
                             </div>

@@ -1,7 +1,13 @@
+// src/hooks/usePayPalCheckout.js
 import { useEffect, useRef, useState } from "react";
 
 function loadPayPalSdk({ clientId, currency = "MXN" }) {
     return new Promise((resolve, reject) => {
+        if (!clientId) {
+            reject(new Error("Falta clientId para cargar PayPal SDK."));
+            return;
+        }
+
         if (window.paypal?.Buttons) return resolve(true);
 
         const existing = document.querySelector('script[data-paypal-sdk="true"]');
@@ -12,13 +18,14 @@ function loadPayPalSdk({ clientId, currency = "MXN" }) {
         }
 
         const s = document.createElement("script");
-        s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(
-            clientId
-        )}&currency=${encodeURIComponent(currency)}&components=buttons`;
+        s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(clientId)}&currency=${encodeURIComponent(currency)}&components=buttons`;
         s.async = true;
+        s.defer = true;
         s.dataset.paypalSdk = "true";
+
         s.onload = () => resolve(true);
         s.onerror = () => reject(new Error("No se pudo cargar el PayPal SDK."));
+
         document.body.appendChild(s);
     });
 }
@@ -35,6 +42,7 @@ export function usePayPalCheckout({
     const containerRef = useRef(null);
     const buttonsRef = useRef(null);
 
+    // ✅ Mantén SIEMPRE los handlers más recientes SIN re-renderizar botones
     const handlersRef = useRef({
         createOrder: null,
         onApprove: null,
@@ -45,7 +53,6 @@ export function usePayPalCheckout({
     const [isReady, setIsReady] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    // ✅ Mantén SIEMPRE los handlers más recientes SIN provocar re-render del botón
     useEffect(() => {
         handlersRef.current.createOrder = createOrder;
         handlersRef.current.onApprove = onApprove;
@@ -57,7 +64,6 @@ export function usePayPalCheckout({
         if (!enabled) {
             setIsReady(false);
 
-            // cleanup cuando se deshabilita
             try { buttonsRef.current?.close(); } catch {}
             buttonsRef.current = null;
 
@@ -73,9 +79,7 @@ export function usePayPalCheckout({
 
         (async () => {
             try {
-                if (!clientId) {
-                    throw new Error("Falta clientId para cargar PayPal SDK.");
-                }
+                setIsReady(false);
 
                 await loadPayPalSdk({ clientId, currency });
                 if (cancelled) return;
@@ -83,8 +87,6 @@ export function usePayPalCheckout({
                 if (!window.paypal?.Buttons) {
                     throw new Error("PayPal SDK no está listo (window.paypal.Buttons undefined)");
                 }
-
-                setIsReady(true);
 
                 const container = containerRef.current;
                 if (!container) return;
@@ -121,6 +123,9 @@ export function usePayPalCheckout({
                 buttonsRef.current = buttons;
 
                 await buttons.render(container);
+                if (cancelled) return;
+
+                setIsReady(true);
             } catch (err) {
                 if (cancelled) return;
                 setIsReady(false);
@@ -140,6 +145,7 @@ export function usePayPalCheckout({
             }
 
             setIsProcessing(false);
+            setIsReady(false);
         };
     }, [enabled, clientId, currency]);
 
