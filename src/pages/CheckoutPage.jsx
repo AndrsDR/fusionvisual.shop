@@ -69,9 +69,9 @@ function buildAddressForSheets(a) {
         .join(" — ");
 }
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:3000";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
-async function postJson(path, body) {
+export async function postJson(path, body) {
     const url = API_BASE ? new URL(path, API_BASE).toString() : path;
 
     const res = await fetch(url, {
@@ -81,13 +81,14 @@ async function postJson(path, body) {
         credentials: "include",
     });
 
-    const json = await res.json().catch(() => null);
+    const text = await res.text();
+    let json = null;
+    try { json = text ? JSON.parse(text) : null; } catch {}
 
-    if (!res.ok) {
-        throw new Error(`HTTP_${res.status}`);
-    }
+    if (!res.ok) throw new Error(`HTTP_${res.status} ${text || ""}`.trim());
     return json;
 }
+
 
 
 export function CheckoutPage() {
