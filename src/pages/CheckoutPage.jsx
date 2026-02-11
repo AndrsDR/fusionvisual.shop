@@ -72,22 +72,20 @@ function buildAddressForSheets(a) {
 const API_BASE = import.meta.env.VITE_API_BASE_URL
     || (import.meta.env.DEV ? "http://127.0.0.1:3000" : "");
 
-export async function postJson(path, body) {
-    // path debe venir como "/api/..."
-    const res = await fetch(path, {
+async function postJson(path, body) {
+    const url = API_BASE ? new URL(path, API_BASE).toString() : path;
+
+    const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
         credentials: "include",
     });
 
-    // Si falla por red/CORS/blocked, fetch NI SIQUIERA te da res.ok; lanza TypeError
-    const text = await res.text();
-    let json = null;
-    try { json = text ? JSON.parse(text) : null; } catch {}
+    const json = await res.json().catch(() => null);
 
     if (!res.ok) {
-        throw new Error(`HTTP_${res.status} ${text || ""}`.trim());
+        throw new Error(`HTTP_${res.status}`);
     }
     return json;
 }
