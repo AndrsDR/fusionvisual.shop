@@ -181,58 +181,59 @@ export function CheckoutPage() {
         onApprove: async (data) => {
             try {
                 setIsPayPalProcessing(true);
-
+            
                 const paypalOrderId = data?.orderID || "";
                 if (!paypalOrderId) throw new Error("No se recibió orderID de PayPal.");
-
+            
                 if (!pendingPayload) throw new Error("No hay pedido pendiente para registrar.");
-                if (!SHEETS_WEBHOOK_URL) throw new Error("Falta configurar VITE_SHEETS_WEBHOOK_URL.");
-
+            
+                // 1) Captura server-side (PayPal)
                 const cap = await postJson("/api/paypal/capture-order", { paypalOrderId });
-
+            
                 const payerEmail =
                     cap?.capture?.payer?.email_address ||
                     cap?.capture?.payer?.email ||
                     "";
-
+            
                 const paidPayload = {
                     ...pendingPayload,
                     status: "PAID",
                     paypal: { id: paypalOrderId, payerEmail }
                 };
-
-                const res = await fetch(SHEETS_WEBHOOK_URL, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(paidPayload)
-                });
-
-                const json = await res.json().catch(() => null);
-                if (!res.ok || !json?.ok) {
-                    throw new Error(json?.error || "No se pudo registrar el pedido en Sheets.");
-                }
-
+            
+                // 2) ✅ Marca como pagado y completa el checkout ANTES de Sheets
                 setPaymentStatus("PAID");
                 updateDraft({
                     paymentStatus: "PAID",
                     status: "COMPLETED",
                     paypal: { orderId: paypalOrderId, payerEmail }
                 });
-
+            
                 publishCheckoutEvent({
                     type: "CHECKOUT_COMPLETED",
                     sessionId,
                     payload: { orderId: pendingPayload.orderId }
                 });
+            
+                // 3) Sheets NO debe romper el flujo (best-effort)
+                try {
+                    const out = await postJson("/api/sheets/log-order", paidPayload);
+                    if (!out?.ok) {
+                        console.warn("Sheets respondió sin ok:", out);
+                    }
+                } catch (e) {
+                    console.warn("No se pudo registrar en Sheets, pero el pago ya fue confirmado:", e);
+                }
             } catch (err) {
-                console.error("❌ PayPal approve/capture -> Sheets error:", err);
-                alert(err?.message || "Error registrando el pedido pagado.");
+                console.error("❌ PayPal approve/capture error:", err);
+                alert(err?.message || "Error procesando el pago.");
                 updateDraft({ status: "ERROR" });
             } finally {
                 setIsSubmitting(false);
                 setIsPayPalProcessing(false);
             }
         },
+        
 
         onCancel: () => {
             alert("Pago cancelado. No se registró ningún pedido.");
