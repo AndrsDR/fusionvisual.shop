@@ -142,6 +142,16 @@ export function CustomizerSection({ designFromDetail }) {
     const [selectedSide, setSelectedSide] = useState("front");
     const [frontDesign, setFrontDesign] = useState(null);
     const [backDesign, setBackDesign] = useState(null);
+    const [frontPlacement, setFrontPlacement] = useState({
+        x: "center",
+        y: "center",
+        scale: 100
+    });
+    const [backPlacement, setBackPlacement] = useState({
+        x: "center",
+        y: "center",
+        scale: 100
+    });
 
     const [enableBack, setEnableBack] = useState(false);
 
@@ -302,10 +312,12 @@ export function CustomizerSection({ designFromDetail }) {
         }
 
         const effectiveColor = getEffectiveColor();
+        const fp = frontPlacement || { x: "center", y: "center", scale: 100 };
+        const bp = backPlacement || { x: "center", y: "center", scale: 100 };
 
         const cartItemId = `custom-${frontDesign?.id || "none"}-${
             backDesign?.id || "none"
-        }-${selectedShirtType}-${effectiveColor}-${selectedSize}-${selectedFabric}`;
+        }-${selectedShirtType}-${effectiveColor}-${selectedSize}-${selectedFabric}-FP(${fp.x},${fp.y},${fp.scale})-BP(${bp.x},${bp.y},${bp.scale})`;
 
         const productForCart = {
             id: cartItemId,
@@ -341,6 +353,8 @@ export function CustomizerSection({ designFromDetail }) {
                       mockup: backDesign.mockup
                   }
                 : null,
+            frontPlacement: fp,
+            backPlacement: enableBack ? bp : null,
 
             unitPrice: 0
         };
@@ -378,6 +392,11 @@ export function CustomizerSection({ designFromDetail }) {
                         onSelectShirtType={setSelectedShirtType}
                         enableBack={enableBack}
                         onToggleBack={handleToggleBack}
+                        selectedSide={selectedSide}
+                        frontPlacement={frontPlacement}
+                        backPlacement={backPlacement}
+                        onChangeFrontPlacement={setFrontPlacement}
+                        onChangeBackPlacement={setBackPlacement}
                     />
 
                     {isCustomSelected ? (
@@ -420,6 +439,7 @@ export function CustomizerSection({ designFromDetail }) {
                                 shirtImg={currentFrontImg}
                                 designImg={frontDesign?.png}
                                 shirtType={selectedShirtType}
+                                placement={frontPlacement}
                             />
                             <p>Frente</p>
                         </div>
@@ -435,6 +455,7 @@ export function CustomizerSection({ designFromDetail }) {
                                     shirtImg={currentBackImg}
                                     designImg={backDesign?.png}
                                     shirtType={selectedShirtType}
+                                    placement={backPlacement}
                                 />
                                 <p>Espalda</p>
                             </div>

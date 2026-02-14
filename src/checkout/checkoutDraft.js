@@ -126,6 +126,19 @@ export function buildItemsForSheet(cartSnapshot) {
             ? ""
             : (item.pngBack || item.backDesign?.png || "");
 
+        const fp = item.frontPlacement || item.frontDesign?.placement || null;
+        const bp = item.backPlacement || item.backDesign?.placement || null;
+
+        const formatP = (p) => {
+            if (!p) return "";
+            const x = p.x || "center";
+            const y = p.y || "center";
+            const s = (p.scale ?? 100);
+            return `x=${x},y=${y},s=${s}`;
+        };
+
+        const position = `front[${formatP(fp)}]/back[${formatP(bp)}]`;
+
         return {
             type,
             designLabel,
@@ -137,7 +150,8 @@ export function buildItemsForSheet(cartSnapshot) {
             quantity,
             unitPrice,
             pngFront,
-            pngBack
+            pngBack,
+            position
         };
     });
 }

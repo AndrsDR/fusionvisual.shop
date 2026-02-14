@@ -12,10 +12,21 @@ export function CustomizerControls({
 
     /* === NUEVO === */
     enableBack,
-    onToggleBack
+    onToggleBack,
+    selectedSide,
+    frontPlacement,
+    backPlacement,
+    onChangeFrontPlacement,
+    onChangeBackPlacement
 }) {
     const colors = shirtData.images;
     const shirtTypes = shirtData.types;
+    const currentPlacement = selectedSide === "back" ? backPlacement : frontPlacement;
+    const setCurrentPlacement = (next) => {
+        if (selectedSide === "back") onChangeBackPlacement(next);
+        else onChangeFrontPlacement(next);
+    };
+    const safeScale = Math.max(0, Math.min(100, Number(currentPlacement?.scale ?? 100)));
 
     return (
         <div className="customizer-controls">
@@ -103,6 +114,61 @@ export function CustomizerControls({
                     </label>
                 </div>
             </div>
+
+            <details className="control-group" style={{ marginTop: 10 }}>
+                <summary style={{ cursor: "pointer", opacity: 0.9 }}>
+                    Posición y escala del diseño ({selectedSide === "back" ? "Espalda" : "Frente"})
+                </summary>
+
+                <div style={{ marginTop: 10, display: "grid", gap: 10 }}>
+                    <label className="control-group">
+                        Posición horizontal:
+                        <select
+                            className="control-select"
+                            value={currentPlacement?.x || "center"}
+                            onChange={(e) => setCurrentPlacement({ ...currentPlacement, x: e.target.value })}
+                        >
+                            <option value="left">Izquierda</option>
+                            <option value="center">Centro</option>
+                            <option value="right">Derecha</option>
+                        </select>
+                    </label>
+
+                    <label className="control-group">
+                        Posición vertical:
+                        <select
+                            className="control-select"
+                            value={currentPlacement?.y || "center"}
+                            onChange={(e) => setCurrentPlacement({ ...currentPlacement, y: e.target.value })}
+                        >
+                            <option value="top">Arriba</option>
+                            <option value="center">Centro</option>
+                            <option value="bottom">Abajo</option>
+                        </select>
+                    </label>
+
+                    <label className="control-group">
+                        Escala: {safeScale}%
+                        <input
+                            type="range"
+                            min="10"
+                            max="100"
+                            value={safeScale}
+                            onChange={(e) =>
+                                setCurrentPlacement({ ...currentPlacement, scale: Number(e.target.value) })
+                            }
+                            style={{ width: "100%" }}
+                        />
+                    </label>
+
+                    {selectedSide === "back" && !enableBack && (
+                        <div style={{ opacity: 0.75 }}>
+                            Activa "Modificar espalda" para controlar posicion/escala en espalda.
+                        </div>
+                    )}
+                </div>
+            </details>
         </div>
     );
 }
+

@@ -232,31 +232,45 @@ SHIRT PREVIEW ‚Äî Vista de la camiseta con dise√±o overlay
     overflow: hidden;
 }
 
-.shirt-design {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -45%);
-}
-
-/* b√°sica: tu config original que te funcionaba bien */
-.shirt-design-basic {
-    width: 35%;
-    transform: translate(-50%, -45%);
-}
-
-/* polo y cuello V: m√°s peque√±as y un pel√≠n m√°s abajo */
-.shirt-design-polo,
-.shirt-design-v-neck {
-    width: 30%;
-    transform: translate(-50%, -40%);
-}
-
 .shirt-base-img {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
+}
+
+/* === PRINT AREA (rect·ngulo donde vive el diseÒo) === */
+.print-area {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -45%);
+
+    display: flex;
+    /* alignItems/justifyContent vienen por inline style */
+
+    /* Evita clicks raros y mantiene limpio */
+    pointer-events: none;
+}
+
+/* Ajusta estos valores si quieres m·s ì·rea imprimibleî */
+.print-area-basic {
+    width: 45%;
+    height: 55%;
+}
+
+.print-area-polo,
+.print-area-v-neck {
+    width: 42%;
+    height: 52%;
+    transform: translate(-50%, -40%);
+}
+
+/* Imagen real del diseÒo dentro del print-area */
+.shirt-design-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 /* ===========================================================
@@ -509,3 +523,4 @@ CATEGORY DROPDOWN ‚Äî barra plegable (overlay)
     text-shadow: 0px 0px 2px var(--text-accent);
     color: var(--text-primary);
 }
+
