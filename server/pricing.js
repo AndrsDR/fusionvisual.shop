@@ -17,7 +17,7 @@ const SIDES_DELTA = {
     both: .59
 };
 
-const DESIGN_FLAT_PRICE = 49;
+const DESIGN_FLAT_PRICE = .49;
 
 function safeNumber(n, fallback = 0) {
     const x = Number(n);
