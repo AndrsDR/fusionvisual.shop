@@ -166,28 +166,26 @@ select.checkout-input {
     padding-right: 34px;
 }
 
-/* ===== Inline group: input + checkbox en una misma fila ===== */
+/* ===== Inline group: input + checkbox perfectamente alineados ===== */
 .checkout-inline-group {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: 12px;
-    align-items: center;
+    align-items: stretch;
 }
 
-/* En mobile: checkbox debajo del input */
-@media (max-width: 520px) {
-    .checkout-inline-group {
-        grid-template-columns: 1fr;
-        align-items: start;
-    }
+/* Evita overflow del input dentro del group */
+.checkout-inline-group .checkout-input {
+    min-width: 0;
 }
 
 /* ===== Checkbox custom (no default) ===== */
 .checkout-inline-check {
+    height: 42px;
+    padding: 0 12px;
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 10px;
     border-radius: 999px;
 
     border: 1px solid rgba(255,255,255,0.08);
@@ -211,6 +209,7 @@ select.checkout-input {
 
     width: 18px;
     height: 18px;
+    flex: 0 0 18px;
     border-radius: 6px;
 
     border: 1px solid rgba(255,255,255,0.18);
@@ -221,6 +220,17 @@ select.checkout-input {
 
     cursor: pointer;
     transition: transform 120ms ease, border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+/* En mobile: input arriba y pill abajo, limpio */
+@media (max-width: 520px) {
+    .checkout-inline-group {
+        grid-template-columns: 1fr;
+    }
+
+    .checkout-inline-check {
+        width: fit-content;
+    }
 }
 
 /* Check con SVG embebido */
