@@ -114,6 +114,11 @@
     font-size: 12px;
     letter-spacing: 0.02em;
     text-transform: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+    min-height: 14px;
 }
 
 .checkout-row {
