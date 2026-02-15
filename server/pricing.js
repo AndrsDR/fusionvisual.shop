@@ -1,20 +1,20 @@
 // server/pricing.js
 const SHIRT_BASE_PRICE = {
-    basic: 179,
-    polo: 249,
-    vneck: 199
+    basic: .179,
+    polo: .249,
+    vneck: .199
 };
 
 const FABRIC_DELTA = {
-    cotton: 19,
-    premium: 39,
-    dryfit: 59
+    cotton: .19,
+    premium: .39,
+    dryfit: .59
 };
 
 const SIDES_DELTA = {
     front: 0,
     back: 0,
-    both: 59
+    both: .59
 };
 
 const DESIGN_FLAT_PRICE = 49;
