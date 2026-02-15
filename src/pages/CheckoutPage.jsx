@@ -617,108 +617,112 @@ export function CheckoutPage() {
 
                                 <div className="checkout-field">
                                     <label className="checkout-label">Número exterior</label>
-                                    <input
-                                        className="checkout-input"
-                                        value={address?.streetNumber || ""}
-                                        onChange={(e) => {
-                                            const v = e.target.value;
-
-                                            setAddress((prev) => {
-                                                const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
-                                                const next = { ...base, streetNumber: v };
-                                                next.formattedAddress = buildFormattedAddress(next);
-                                                return next;
-                                            });
-
-                                            updateDraft({ address: { streetNumber: v } });
-                                        }}
-                                        placeholder={address?.noNumber ? "S/N" : "Ej. 123"}
-                                        disabled={isSubmitting || !coloniaSelected || Boolean(address?.noNumber)}
-                                    />
-
-                                    <label className="checkout-inline-check">
+                                    <div className="checkout-inline-group">
                                         <input
-                                            type="checkbox"
-                                            checked={Boolean(address?.noNumber)}
+                                            className="checkout-input"
+                                            value={address?.streetNumber || ""}
                                             onChange={(e) => {
-                                                const checked = e.target.checked;
+                                                const v = e.target.value;
 
                                                 setAddress((prev) => {
                                                     const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
-                                                    const next = {
-                                                        ...base,
-                                                        noNumber: checked,
-                                                        streetNumber: checked ? "" : (base.streetNumber || "")
-                                                    };
+                                                    const next = { ...base, streetNumber: v };
                                                     next.formattedAddress = buildFormattedAddress(next);
                                                     return next;
                                                 });
 
-                                                updateDraft({
-                                                    address: {
-                                                        noNumber: checked,
-                                                        streetNumber: checked ? "" : (address?.streetNumber || "")
-                                                    }
-                                                });
+                                                updateDraft({ address: { streetNumber: v } });
                                             }}
-                                            disabled={isSubmitting || !coloniaSelected}
+                                            placeholder={address?.noNumber ? "S/N" : "Ej. 123"}
+                                            disabled={isSubmitting || !coloniaSelected || Boolean(address?.noNumber)}
                                         />
-                                        Sin número
-                                    </label>
+
+                                        <label className="checkout-inline-check">
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(address?.noNumber)}
+                                                onChange={(e) => {
+                                                    const checked = e.target.checked;
+
+                                                    setAddress((prev) => {
+                                                        const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
+                                                        const next = {
+                                                            ...base,
+                                                            noNumber: checked,
+                                                            streetNumber: checked ? "" : (base.streetNumber || "")
+                                                        };
+                                                        next.formattedAddress = buildFormattedAddress(next);
+                                                        return next;
+                                                    });
+
+                                                    updateDraft({
+                                                        address: {
+                                                            noNumber: checked,
+                                                            streetNumber: checked ? "" : (address?.streetNumber || "")
+                                                        }
+                                                    });
+                                                }}
+                                                disabled={isSubmitting || !coloniaSelected}
+                                            />
+                                            <span>Sin numero</span>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
 
                             <div className="checkout-row">
                                 <div className="checkout-field">
                                     <label className="checkout-label">Interior</label>
-                                    <input
-                                        className="checkout-input"
-                                        value={address?.interiorNumber || ""}
-                                        onChange={(e) => {
-                                            const v = e.target.value;
-
-                                            setAddress((prev) => {
-                                                const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
-                                                const next = { ...base, interiorNumber: v };
-                                                next.formattedAddress = buildFormattedAddress(next);
-                                                return next;
-                                            });
-
-                                            updateDraft({ address: { interiorNumber: v } });
-                                        }}
-                                        placeholder={address?.noInterior ? "S/N" : "Ej. 2B"}
-                                        disabled={isSubmitting || !coloniaSelected || Boolean(address?.noInterior)}
-                                    />
-
-                                    <label className="checkout-inline-check">
+                                    <div className="checkout-inline-group">
                                         <input
-                                            type="checkbox"
-                                            checked={Boolean(address?.noInterior)}
+                                            className="checkout-input"
+                                            value={address?.interiorNumber || ""}
                                             onChange={(e) => {
-                                                const checked = e.target.checked;
+                                                const v = e.target.value;
 
                                                 setAddress((prev) => {
                                                     const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
-                                                    const next = {
-                                                        ...base,
-                                                        noInterior: checked,
-                                                        interiorNumber: checked ? "" : (base.interiorNumber || "")
-                                                    };
+                                                    const next = { ...base, interiorNumber: v };
                                                     next.formattedAddress = buildFormattedAddress(next);
                                                     return next;
                                                 });
 
-                                                updateDraft({
-                                                    address: {
-                                                        noInterior: checked,
-                                                        interiorNumber: checked ? "" : (address?.interiorNumber || "")
-                                                    }
-                                                });
+                                                updateDraft({ address: { interiorNumber: v } });
                                             }}
-                                            disabled={isSubmitting || !coloniaSelected}
+                                            placeholder={address?.noInterior ? "S/N" : "Ej. 2B"}
+                                            disabled={isSubmitting || !coloniaSelected || Boolean(address?.noInterior)}
                                         />
-                                        Sin interior
-                                    </label>
+
+                                        <label className="checkout-inline-check">
+                                            <input
+                                                type="checkbox"
+                                                checked={Boolean(address?.noInterior)}
+                                                onChange={(e) => {
+                                                    const checked = e.target.checked;
+
+                                                    setAddress((prev) => {
+                                                        const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
+                                                        const next = {
+                                                            ...base,
+                                                            noInterior: checked,
+                                                            interiorNumber: checked ? "" : (base.interiorNumber || "")
+                                                        };
+                                                        next.formattedAddress = buildFormattedAddress(next);
+                                                        return next;
+                                                    });
+
+                                                    updateDraft({
+                                                        address: {
+                                                            noInterior: checked,
+                                                            interiorNumber: checked ? "" : (address?.interiorNumber || "")
+                                                        }
+                                                    });
+                                                }}
+                                                disabled={isSubmitting || !coloniaSelected}
+                                            />
+                                            <span>Sin interior</span>
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div className="checkout-field">
