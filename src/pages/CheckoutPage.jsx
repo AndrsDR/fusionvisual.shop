@@ -660,7 +660,7 @@ export function CheckoutPage() {
                                                 }}
                                                 disabled={isSubmitting || !coloniaSelected}
                                             />
-                                            <span>Sin numero</span>
+                                            <span>Sin número</span>
                                         </label>
                                     </div>
                                 </div>
