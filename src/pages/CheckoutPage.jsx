@@ -591,59 +591,55 @@ export function CheckoutPage() {
                             <div className="checkout-row">
                                 <div className="checkout-field checkout-field--aligned">
                                     <label className="checkout-label">Calle</label>
-                                                        
-                                    <div className="checkout-inline-group checkout-inline-group--solo">
-                                        <input
-                                            className="checkout-input"
-                                            value={address?.street || ""}
-                                            onChange={(e) => {
-                                                const v = e.target.value;
-                                            
-                                                setAddress((prev) => {
-                                                    const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
-                                                    const next = { ...base, street: v };
-                                                    next.formattedAddress = buildFormattedAddress(next);
-                                                    return next;
-                                                });
-                                            
-                                                updateDraft({ address: { street: v } });
-                                            }}
-                                            placeholder="Ej. Av. Tulum"
-                                            disabled={isSubmitting || !coloniaSelected}
-                                        />
-                                    </div>
+                                    <input
+                                        className="checkout-input"
+                                        value={address?.street || ""}
+                                        onChange={(e) => {
+                                            const v = e.target.value;
+
+                                            setAddress((prev) => {
+                                                const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
+                                                const next = { ...base, street: v };
+                                                next.formattedAddress = buildFormattedAddress(next);
+                                                return next;
+                                            });
+
+                                            updateDraft({ address: { street: v } });
+                                        }}
+                                        placeholder="Ej. Av. Tulum"
+                                        disabled={isSubmitting || !coloniaSelected}
+                                    />
                                 </div>
-                                        
+
                                 <div className="checkout-field checkout-field--aligned">
                                     <label className="checkout-label">Número exterior</label>
-                                        
                                     <div className="checkout-inline-group">
                                         <input
                                             className="checkout-input"
                                             value={address?.streetNumber || ""}
                                             onChange={(e) => {
                                                 const v = e.target.value;
-                                            
+
                                                 setAddress((prev) => {
                                                     const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
                                                     const next = { ...base, streetNumber: v };
                                                     next.formattedAddress = buildFormattedAddress(next);
                                                     return next;
                                                 });
-                                            
+
                                                 updateDraft({ address: { streetNumber: v } });
                                             }}
                                             placeholder={address?.noNumber ? "S/N" : "Ej. 123"}
                                             disabled={isSubmitting || !coloniaSelected || Boolean(address?.noNumber)}
                                         />
-                            
+
                                         <label className="checkout-inline-check">
                                             <input
                                                 type="checkbox"
                                                 checked={Boolean(address?.noNumber)}
                                                 onChange={(e) => {
                                                     const checked = e.target.checked;
-                                                
+
                                                     setAddress((prev) => {
                                                         const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
                                                         const next = {
@@ -654,7 +650,7 @@ export function CheckoutPage() {
                                                         next.formattedAddress = buildFormattedAddress(next);
                                                         return next;
                                                     });
-                                                
+
                                                     updateDraft({
                                                         address: {
                                                             noNumber: checked,
@@ -669,38 +665,37 @@ export function CheckoutPage() {
                                     </div>
                                 </div>
                             </div>
-                                            
+
                             <div className="checkout-row">
                                 <div className="checkout-field checkout-field--aligned">
-                                    <label className="checkout-label">Interior</label>
-                                            
+                                    <label className="checkout-label">Número Interior</label>
                                     <div className="checkout-inline-group">
                                         <input
                                             className="checkout-input"
                                             value={address?.interiorNumber || ""}
                                             onChange={(e) => {
                                                 const v = e.target.value;
-                                            
+
                                                 setAddress((prev) => {
                                                     const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
                                                     const next = { ...base, interiorNumber: v };
                                                     next.formattedAddress = buildFormattedAddress(next);
                                                     return next;
                                                 });
-                                            
+
                                                 updateDraft({ address: { interiorNumber: v } });
                                             }}
                                             placeholder={address?.noInterior ? "S/N" : "Ej. 2B"}
                                             disabled={isSubmitting || !coloniaSelected || Boolean(address?.noInterior)}
                                         />
-                            
+
                                         <label className="checkout-inline-check">
                                             <input
                                                 type="checkbox"
                                                 checked={Boolean(address?.noInterior)}
                                                 onChange={(e) => {
                                                     const checked = e.target.checked;
-                                                
+
                                                     setAddress((prev) => {
                                                         const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
                                                         const next = {
@@ -711,7 +706,7 @@ export function CheckoutPage() {
                                                         next.formattedAddress = buildFormattedAddress(next);
                                                         return next;
                                                     });
-                                                
+
                                                     updateDraft({
                                                         address: {
                                                             noInterior: checked,
@@ -725,24 +720,23 @@ export function CheckoutPage() {
                                         </label>
                                     </div>
                                 </div>
-                                            
+
                                 <div className="checkout-field checkout-field--aligned">
                                     <label className="checkout-label">Referencias (opcional)</label>
-                                            
                                     <div className="checkout-inline-group checkout-inline-group--solo">
                                         <input
                                             className="checkout-input"
                                             value={address?.references || ""}
                                             onChange={(e) => {
                                                 const v = e.target.value;
-                                            
+
                                                 setAddress((prev) => {
                                                     const base = prev && typeof prev === "object" ? prev : createEmptyAddress();
                                                     const next = { ...base, references: v };
                                                     next.formattedAddress = buildFormattedAddress(next);
                                                     return next;
                                                 });
-                                            
+
                                                 updateDraft({ address: { references: v } });
                                             }}
                                             placeholder="Ej. Casa blanca, portón negro…"
@@ -751,7 +745,6 @@ export function CheckoutPage() {
                                     </div>
                                 </div>
                             </div>
-
 
                             <div className="checkout-field">
                                 <p className="checkout-muted">

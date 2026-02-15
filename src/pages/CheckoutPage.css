@@ -184,6 +184,10 @@ select.checkout-input {
     min-width: 0;
 }
 
+.checkout-inline-group--solo {
+    grid-template-columns: 1fr;
+}
+
 /* ===== Checkbox custom (no default) ===== */
 .checkout-inline-check {
     height: 42px;
@@ -367,14 +371,4 @@ select.checkout-input {
 .checkout-field--aligned > .checkout-inline-group,
 .checkout-field--aligned > .checkout-input {
     align-self: start;
-}
-
-.checkout-input,
-.checkout-inline-check,
-.checkout-inline-group {
-    box-sizing: border-box;
-}
-
-.checkout-inline-group--solo {
-    grid-template-columns: 1fr;
 }
