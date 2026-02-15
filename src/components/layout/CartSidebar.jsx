@@ -24,6 +24,40 @@ function getShirtImagePath(item) {
     return `/shirts/${type}/front/${colorId}.png`;
 }
 
+function getFlexAlignmentX(x) {
+    if (x === "left") return "flex-start";
+    if (x === "right") return "flex-end";
+    return "center";
+}
+
+function getFlexAlignmentY(y) {
+    if (y === "top") return "flex-start";
+    if (y === "bottom") return "flex-end";
+    return "center";
+}
+
+function getTransformOrigin(x, y) {
+    const ox = x === "left" ? "0%" : x === "right" ? "100%" : "50%";
+    const oy = y === "top" ? "0%" : y === "bottom" ? "100%" : "50%";
+    return `${ox} ${oy}`;
+}
+
+function getThumbPrintAreaStyle(shirtType) {
+    if (shirtType === "polo" || shirtType === "v-neck") {
+        return {
+            width: "42%",
+            height: "52%",
+            transform: "translate(-50%, -40%)"
+        };
+    }
+
+    return {
+        width: "45%",
+        height: "55%",
+        transform: "translate(-50%, -45%)"
+    };
+}
+
 function SidesLabel({ mode }) {
     if (mode === "both") return <span>Frente y espalda</span>;
     if (mode === "back") return <span>Solo espalda</span>;
@@ -68,11 +102,35 @@ function CartItemThumb({ item }) {
         );
     }
 
+    const placement = item.frontPlacement || item.frontDesign?.placement || {};
+    const x = placement?.x || "center";
+    const y = placement?.y || "center";
+    const scale = Math.max(0, Math.min(100, Number(placement?.scale ?? 100)));
+    const printAreaStyle = getThumbPrintAreaStyle(item.shirtType || "basic");
+    const designSrc = item.frontDesign?.png || "";
+
     return (
         <div className="cart-thumb-shirt-wrap">
             <img src={getShirtImagePath(item)} alt="Camisa" className="cart-thumb-shirt" />
-            {item.frontDesign && (
-                <img src={item.frontDesign.png} alt="DiseÃ±o" className="cart-thumb-design" />
+            {!!designSrc && (
+                <div
+                    className="cart-thumb-print-area"
+                    style={{
+                        ...printAreaStyle,
+                        justifyContent: getFlexAlignmentX(x),
+                        alignItems: getFlexAlignmentY(y)
+                    }}
+                >
+                    <img
+                        src={designSrc}
+                        alt="Diseño"
+                        className="cart-thumb-design-img"
+                        style={{
+                            transform: `scale(${scale / 100})`,
+                            transformOrigin: getTransformOrigin(x, y)
+                        }}
+                    />
+                </div>
             )}
         </div>
     );
@@ -259,3 +317,4 @@ export function CartSidebar() {
         </div>
     );
 }
+

@@ -68,8 +68,7 @@
     flex-shrink: 0;
 }
 
-.cart-thumb-img,
-.cart-thumb-shirt {
+.cart-thumb-img {
     width: 80px;
     height: auto;
     border-radius: 8px;
@@ -79,14 +78,30 @@
 .cart-thumb-shirt-wrap {
     position: relative;
     width: 80px;
+    height: 80px;
 }
 
-.cart-thumb-design {
+.cart-thumb-shirt {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    background-color: #111;
+    object-fit: contain;
+    display: block;
+}
+
+.cart-thumb-print-area {
     position: absolute;
-    top: 50%;
     left: 50%;
-    width: 30%;
-    transform: translate(-50%, -45%);
+    top: 50%;
+    display: flex;
+    pointer-events: none;
+}
+
+.cart-thumb-design-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 .cart-item-info {
