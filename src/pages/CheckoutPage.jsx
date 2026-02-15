@@ -589,7 +589,7 @@ export function CheckoutPage() {
                             </div>
 
                             <div className="checkout-row">
-                                <div className="checkout-field">
+                                <div className="checkout-field checkout-field--aligned">
                                     <label className="checkout-label">Calle</label>
                                     <input
                                         className="checkout-input"
@@ -611,7 +611,7 @@ export function CheckoutPage() {
                                     />
                                 </div>
 
-                                <div className="checkout-field">
+                                <div className="checkout-field checkout-field--aligned">
                                     <label className="checkout-label">Número exterior</label>
                                     <div className="checkout-inline-group">
                                         <input
@@ -667,7 +667,7 @@ export function CheckoutPage() {
                             </div>
 
                             <div className="checkout-row">
-                                <div className="checkout-field">
+                                <div className="checkout-field checkout-field--aligned">
                                     <label className="checkout-label">Interior</label>
                                     <div className="checkout-inline-group">
                                         <input
@@ -721,7 +721,7 @@ export function CheckoutPage() {
                                     </div>
                                 </div>
 
-                                <div className="checkout-field">
+                                <div className="checkout-field checkout-field--aligned">
                                     <label className="checkout-label">Referencias (opcional)</label>
                                     <input
                                         className="checkout-input"

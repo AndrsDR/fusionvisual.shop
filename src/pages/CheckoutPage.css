@@ -345,3 +345,26 @@ select.checkout-input {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--checkout-border);
 }
+
+/* =========================================================
+   FIX DEFINITIVO: alinear inputs entre columnas en checkout-row
+   Solo para campos marcados con .checkout-field--aligned
+   ========================================================= */
+
+.checkout-field--aligned {
+    display: grid;
+    grid-template-rows: 16px auto;
+    gap: 8px;
+}
+
+.checkout-field--aligned > .checkout-label {
+    height: 16px;
+    line-height: 16px;
+    margin: 0;
+    padding: 0;
+}
+
+.checkout-field--aligned > .checkout-inline-group,
+.checkout-field--aligned > .checkout-input {
+    align-self: start;
+}
