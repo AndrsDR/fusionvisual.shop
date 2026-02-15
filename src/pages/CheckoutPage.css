@@ -1,4 +1,4 @@
-/* src/pages/CheckoutPage.css */
+﻿/* src/pages/CheckoutPage.css */
 
 /* =========
    Tokens
@@ -367,4 +367,14 @@ select.checkout-input {
 .checkout-field--aligned > .checkout-inline-group,
 .checkout-field--aligned > .checkout-input {
     align-self: start;
+}
+
+.checkout-input,
+.checkout-inline-check,
+.checkout-inline-group {
+    box-sizing: border-box;
+}
+
+.checkout-inline-group--solo {
+    grid-template-columns: 1fr;
 }
