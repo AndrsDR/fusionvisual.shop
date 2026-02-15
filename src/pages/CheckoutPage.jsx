@@ -1,4 +1,4 @@
-// src/pages/CheckoutPage.jsx
+﻿// src/pages/CheckoutPage.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useCheckoutDraft } from "../hooks/useCheckoutDraft.js";
 import { usePayPalCheckout } from "../hooks/usePayPalCheckout.js";
