@@ -7,7 +7,7 @@ import { publishCheckoutEvent } from "../checkout/checkoutChannel.js";
 
 import "./CheckoutPage.css";
 
-const SHEETS_WEBHOOK_URL = import.meta.env.VITE_SHEETS_WEBHOOK_URL || "";
+
 const COPOMEX_TOKEN = import.meta.env.VITE_COPOMEX_TOKEN || "";
 
 function money(n) {
@@ -233,7 +233,7 @@ export function CheckoutPage() {
                 setIsPayPalProcessing(false);
             }
         },
-        
+
 
         onCancel: () => {
             alert("Pago cancelado. No se registró ningún pedido.");
