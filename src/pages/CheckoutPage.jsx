@@ -478,9 +478,10 @@ export function CheckoutPage() {
                     <h2 className="checkout-title">Checkout</h2>
                 </div>
 
-                <p className="checkout-meta">
-                    Total: <strong>{money(total)}</strong>
-                </p>
+                <div className="checkout-meta">
+                    <span>Total a pagar</span>
+                    <strong>{money(total)}</strong>
+                </div>
 
                 {!submitted ? (
                     <>
